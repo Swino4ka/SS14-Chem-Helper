@@ -1,0 +1,76 @@
+body {
+    font-family: "Geologica", serif;
+    max-width: 800px;
+    margin: 20px auto;
+    padding: 0 10px;
+    background-color: #08061A;
+    color: white;
+}
+
+button {
+    background-color: #202038;
+    color: white;
+    cursor: pointer;
+    border-radius: 4px;
+    border: none;
+    transition: 100ms;
+}
+
+button:hover {
+    background-color: #3A365F;
+    transform: scale(1.05);
+}
+
+button:active {
+    transform: scale(1);
+}
+
+h1 {
+    text-align: center;
+}
+
+  .form-group {
+    margin-bottom: 15px;
+}
+
+label {
+    display: block;
+    margin-bottom: 5px;
+}
+
+input[type="number"], select {
+    width: 100%;
+    padding: 8px;
+    box-sizing: border-box;
+    background-color: #202038;
+    color: white;
+    border: 1px solid #202038;
+    border-radius: 4px;
+}
+select:active, select:focus, input[type="number"]:active, input[type="number"]:focus {
+    border: 2px solid #3A365F;
+}
+
+button {
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    margin-top: 10px;
+}
+
+.result, .production-list {
+    margin-top: 20px;
+    border: 1px solid #202038;
+    border-radius: 4px;
+    padding: 10px;
+    background: #202038;
+}
+
+.result ul, .production-list ul {
+    list-style: none;
+    padding-left: 0;
+}
+
+.result li, .production-list li {
+    padding: 5px 0;
+}
