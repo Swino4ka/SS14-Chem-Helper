@@ -1,82 +1,168 @@
+
+
 body {
-    font-family: "Geologica", serif;
+    font-family: "Geologica", sans-serif;
     max-width: 800px;
     margin: 20px auto;
     padding: 0 10px;
-    background-color: #08061A;
-    color: white;
+    background-color: #0a081f;
+    color: #e0e0ff;
+    position: relative;
+    overflow-x: hidden;
 }
 
-button {
-    background-color: #202038;
-    color: white;
-    cursor: pointer;
-    border-radius: 4px;
-    border: none;
-    transition: 100ms;
+
+body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: 
+        radial-gradient(circle at 10% 20%, rgba(96, 16, 144, 0.1) 0%, transparent 50%),
+        radial-gradient(circle at 90% 80%, rgba(0, 87, 184, 0.1) 0%, transparent 50%),
+        linear-gradient(to bottom, rgba(10,8,31,1) 0%, rgba(18,15,51,1) 100%);
+    z-index: -1;
+    animation: starPulse 20s infinite alternate;
 }
 
-button:hover {
-    background-color: #3A365F;
-    transform: scale(1.05);
-}
-
-button:active {
-    transform: scale(1);
+@keyframes starPulse {
+    from { opacity: 0.8; }
+    to { opacity: 1; }
 }
 
 h1 {
+    font-family: 'Orbitron', sans-serif;
     text-align: center;
+    color: #6a5acd;
+    text-shadow: 0 0 15px rgba(106,90,205,0.5);
+    position: relative;
+    padding-bottom: 20px;
 }
 
-  .form-group {
-    margin-bottom: 15px;
+h1::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 200px;
+    height: 3px;
+    background: linear-gradient(90deg, transparent, #6a5acd, transparent);
+}
+
+button {
+    background: linear-gradient(145deg, #3A365F 0%, #202038 100%);
+    color: white;
+    padding: 12px 25px;
+    border: 1px solid #4a457a;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    letter-spacing: 0.5px;
+    box-shadow: 0 4px 15px rgba(58,54,95,0.3);
+}
+
+button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(106,90,205,0.5);
+    background: linear-gradient(145deg, #4a457a 0%, #3A365F 100%);
+}
+
+button:active {
+    transform: translateY(0);
+}
+
+.form-group {
+    margin-bottom: 20px;
+    position: relative;
 }
 
 label {
     display: block;
-    margin-bottom: 5px;
+    margin-bottom: 8px;
+    color: #a0a0ff;
+    font-size: 0.9em;
 }
 
 input[type="number"], select {
     width: 100%;
-    padding: 8px;
-    box-sizing: border-box;
-    background-color: #202038;
+    padding: 10px;
+    background: rgba(32,32,56,0.8);
+    border: 1px solid #4a457a;
+    border-radius: 6px;
     color: white;
-    border: 1px solid #202038;
-    border-radius: 4px;
-}
-select:active, select:focus, input[type="number"]:active, input[type="number"]:focus {
-    border: 2px solid #3A365F;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(5px);
 }
 
-button {
-    padding: 10px 20px;
-    font-size: 16px;
-    cursor: pointer;
-    margin-top: 10px;
+select:active, select:focus, 
+input[type="number"]:active, 
+input[type="number"]:focus {
+    border-color: #6a5acd;
+    box-shadow: 0 0 10px rgba(106,90,205,0.3);
 }
 
 .result, .production-list {
-    margin-top: 20px;
-    border: 1px solid #202038;
-    border-radius: 4px;
-    padding: 10px;
-    background: #202038;
+    margin-top: 25px;
+    background: rgba(32,32,56,0.9);
+    border: 1px solid #4a457a;
+    border-radius: 8px;
+    padding: 20px;
+    position: relative;
+    backdrop-filter: blur(5px);
+}
+
+.result::before, .production-list::before {
+    content: '';
+    position: absolute;
+    top: -2px;
+    left: -2px;
+    right: -2px;
+    bottom: -2px;
+    border-radius: 10px;
+    z-index: -1;
+    background: linear-gradient(45deg, #6a5acd, #3A365F, #202038);
+    animation: borderGlow 3s infinite alternate;
+}
+
+@keyframes borderGlow {
+    from { opacity: 0.5; }
+    to { opacity: 1; }
 }
 
 .result ul, .production-list ul {
-    list-style: none;
     padding-left: 0;
+    margin: 0;
 }
 
 .result li, .production-list li {
-    padding: 5px 0;
+    padding: 8px 0;
+    border-bottom: 1px solid rgba(74,69,122,0.3);
 }
 
 #detailedList ul {
-    margin-left: 20px;
-    list-style-type: disc;
-  }
-  
+    margin-left: 25px;
+    list-style-type: '→ ';
+    color: #6a5acd;
+}
+
+#detailedList li {
+    padding: 5px 0;
+    font-size: 0.95em;
+}
+
+
+.star {
+    position: fixed;
+    background: white;
+    border-radius: 50%;
+    animation: twinkle var(--duration) ease-in-out infinite;
+}
+
+@keyframes twinkle {
+    0%, 100% { opacity: 0.3; }
+    50% { opacity: 1; }
+}
+
