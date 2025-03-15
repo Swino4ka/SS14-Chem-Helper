@@ -165,27 +165,25 @@ function updateBaseReagentsList() {
   }
 }
 
-function buildMaterialTree(materialName, quantity, isRoot = false) {
+function buildMaterialTree(materialName, quantity) {
   const li = document.createElement('li');
-  if (isRoot) {
-    li.textContent = `${materialName} ${Math.round(quantity)}u`;
-  } else {
-    li.textContent = `${materialName} ${Math.round(quantity)}u`;
-  }
   
+  const displayQuantity = materialName.toLowerCase() === 'плазма' ? 1 : Math.round(quantity);
+  li.textContent = `${materialName} ${displayQuantity}u`;
+
   if (materials.hasOwnProperty(materialName)) {
     const composition = materials[materialName];
     const ul = document.createElement('ul');
     for (let reagent in composition) {
-      const reagentQuantity = quantity * composition[reagent];
+      const reagentQuantity = materialName.toLowerCase() === 'плазма' ? 1 : quantity * composition[reagent];
       const childLi = buildMaterialTree(reagent, reagentQuantity);
       ul.appendChild(childLi);
     }
     li.appendChild(ul);
   }
-  
   return li;
 }
+
 
 function updateDetailedList() {
   detailedListElem.innerHTML = "";
