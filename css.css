@@ -23,7 +23,6 @@ body::before {
 }
 
 h1 {
-    font-family: 'Orbitron', sans-serif;
     text-align: center;
     color: #6a5acd;
     margin: 2rem 0;
@@ -40,10 +39,16 @@ button {
     cursor: pointer;
     font-size: 16px;
     width: 100%;
+    transition: 200ms ease-in-out;
 }
 
 button:hover {
     background: #3A365F;
+    transform: scale(1.1);
+}
+
+button:active {
+    transform: scale(1);
 }
 
 .form-group {
@@ -67,8 +72,7 @@ input[type="number"], select {
     font-size: 16px;
 }
 
-select:focus, 
-input[type="number"]:focus {
+select:focus, input[type="number"]:focus {
     outline: 2px solid #6a5acd;
     outline-offset: -1px;
 }
