@@ -2,62 +2,67 @@
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
-  <title>ChemHelper Space Station 14</title>
-  <link rel="icon" type="image/x-icon" href="icon.png">
+  <title>🧪 ChemHelper Space Station 14</title>
+  <link rel="icon" href="icon.png">
   <link rel="stylesheet" href="css.css">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Geologica:wght@100..900&display=swap" rel="stylesheet">
 </head>
 <body>
-  <h1 class="fade-in">🧪 ChemHelper Space Station 14</h1>
 
-  <div class="container fade-in">
-    <div class="form-group">
-      <label for="quantity">Количество препарата (в юнитах):</label>
-      <input type="number" id="quantity" min="1" placeholder="Введите количество">
-    </div>
-    <div class="form-group">
-      <label for="material">Выберите материал:</label>
-      <select id="material"></select>
-    </div>
-    <button id="addBtn">Добавить материал</button>
+  <h1 class="fade-in">🧬 ChemHelper Space Station 14</h1>
+
+  <div class="form-group fade-in">
+    <label for="quantity">Количество препарата (юниты):</label>
+    <input type="number" id="quantity" min="1" placeholder="Введите количество">
   </div>
 
-  <div class="production-list fade-in">
+  <br>
+
+  <div class="form-group fade-in">
+    <label for="material">Выберите материал:</label>
+    <select id="material"></select>
+  </div>
+
+  <br>
+
+  <button id="addBtn" class="fade-in">Добавить материал</button>
+
+  <section class="fade-in">
     <h2>📋 Список материалов</h2>
     <ul id="productionList"></ul>
-  </div>
+  </section>
 
-  <div class="result fade-in">
-    <h2>🧬 Необходимые реагенты</h2>
+  <section class="fade-in">
+    <h2>⚗️ Необходимые реагенты</h2>
     <ul id="reagentsList"></ul>
-  </div>
+  </section>
 
-  <div class="result fade-in">
-    <h2>🔬 Базовые материалы</h2>
+  <section class="fade-in">
+    <h2>🔭 Базовые материалы</h2>
     <ul id="baseReagentsList"></ul>
-  </div>
+  </section>
 
-  <div class="result fade-in">
-    <h2>📖 Подробный состав препарата</h2>
+  <section class="fade-in">
+    <h2>📖 Подробный состав</h2>
     <div id="detailedList"></div>
-  </div>
+  </section>
 
   <footer class="fade-in">
-    <p>Создатель: <b>Swino4ka</b></p>
-    <p>Меня можно найти тут:</p>
+    <p>✨ Создатель: Swino4ka</p>
     <div class="links">
-      <a href="https://discord.com/users/472393576010088449" target="_blank">Discord</a>
-      <a href="https://t.me/Swino4ka" target="_blank">Telegram</a>
+      <a href="https://discord.com/users/472393576010088449">Discord</a>
+      <a href="https://t.me/Swino4ka">Telegram</a>
       <a href="mailto:rybalalka@gmail.com">Gmail</a>
-      <a href="https://steamcommunity.com/profiles/76561198806638670/" target="_blank">Steam</a>
-      <a href="https://www.youtube.com/@swino4ka" target="_blank">YouTube</a>
-      <a href="https://www.linkedin.com/in/oleksandr-kvartiuk-b24171265" target="_blank">LinkedIn</a>
-      <a href="https://github.com/Swino4ka" target="_blank">GitHub</a>  
-    </div>
-  </footer>
+      <a href="https://steamcommunity.com/profiles/76561198806638670/">Steam</a>
+      <a href="https://www.youtube.com/@swino4ka">YouTube</a>
+      <a href="https://www.linkedin.com/in/oleksandr-kvartiuk-b24171265">LinkedIn</a>
+      <a href="https://github.com/Swino4ka">GitHub</a>
+      <br><br>
+  </section>
 
   <script src="js.js"></script>
+
 </body>
 </html>

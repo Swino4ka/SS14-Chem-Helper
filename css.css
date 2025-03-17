@@ -1,111 +1,142 @@
 body {
     font-family: "Geologica", sans-serif;
-    max-width: 900px;
-    margin: 40px auto;
-    padding: 20px;
-    background-color: #0a081f;
-    color: #e0e0ff;
-    line-height: 1.6;
+    color: #f0f0ff;
+    background: linear-gradient(-45deg, #1b1229, #150f2b, #231746, #0f0820);
+    background-size: 400% 400%;
+    animation: gradientMove 15s ease infinite;
+    padding: 0px 30px;
     overflow-x: hidden;
+    max-width: 900px;
+    margin: 0px auto 50px auto; 
+    box-sizing: border-box;
 }
 
+body {
+    animation: bgMove 15s ease infinite alternate;
+}
+  
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+  
+.fade-in {
+    animation: fadeIn 1s ease forwards;
+}
+  
 h1, h2 {
     text-align: center;
-    color: #a591f5;
-    margin-bottom: 1rem;
+    color: #c4b5fd;
 }
-
-h1 {
-    font-size: 2.5rem;
-}
-
+  
 button {
-    background: #584dcf;
-    color: white;
-    padding: 10px 20px;
+    padding: 12px 25px;
+    border-radius: 10px;
     border: none;
-    border-radius: 8px;
+    background: #6246f0;
+    color: white;
     cursor: pointer;
-    font-size: 16px;
-    transition: transform 0.2s, box-shadow 0.2s;
+    transition: transform 0.2s ease, box-shadow 0.3s;
+    box-shadow: 0 0 15px rgba(196,181,253,0.4);
+    width: 100%;
+    max-width: 300px;
+    display: block;
+    margin: 10px auto;
 }
-
+  
 button:hover {
-    transform: scale(1.05);
-    box-shadow: 0 0 15px rgba(88, 77, 207, 0.6);
+    transform: scale(1.1);
 }
-
-.form-group {
-    margin-bottom: 1.5rem;
-}
-
-label {
-    margin-bottom: 0.5rem;
-    color: #a0a0ff;
-}
-
+  
 input[type="number"], select {
     width: 100%;
     padding: 10px;
-    background: #1f1c44;
-    border: none;
     border-radius: 8px;
-    color: #fff;
-    transition: box-shadow 0.2s;
+    background: rgba(27,18,41,0.8);
+    border: none;
+    color: white;
+    backdrop-filter: blur(5px);
+    box-shadow: 0 0 5px rgba(196,181,253,0.3);
+}
+  
+input[type="number"] {
+    width: 97.7%;
 }
 
-input[type="number"]:focus, select:focus {
-    box-shadow: 0 0 10px rgba(106, 90, 205, 0.6);
+input:focus, select:focus {
     outline: none;
+    box-shadow: 0 0 20px rgba(255,255,255,0.6);
 }
-
-.result, .production-list, .container {
-    margin: 1.5rem 0;
-    padding: 1.5rem;
-    background: #181535;
-    border-radius: 10px;
-    box-shadow: 0 0 10px rgba(0,0,0,0.4);
+  
+section {
+    background: rgba(31,25,65,0.8);
+    padding: 20px;
+    margin: 20px 0;
+    border-radius: 12px;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 0 15px rgba(0,0,0,0.5);
 }
-
+  
 footer {
     text-align: center;
-    margin-top: 3rem;
-    padding: 1rem;
-    background: #151330;
-    border-radius: 10px;
+    padding: 15px;
+    background: rgba(27,22,55,0.8);
+    border-radius: 8px;
 }
-
-footer .links a {
-    color: #a591f5;
+  
+footer a {
+    color: #c4b5fd;
+    margin: 0 6px;
     text-decoration: none;
-    margin: 0 8px;
-    transition: color 0.2s ease;
 }
-
-footer .links a:hover {
+  
+footer a:hover {
     color: #fff;
 }
-
-.fade-in {
-    animation: fadeIn 1s ease-in-out;
+  
+@keyframes bgMove {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
 }
-
-@keyframes fadeIn {
-    from { opacity: 0; transform: translateY(20px); }
-    to { opacity: 1; transform: translateY(0); }
-}
-
-.star {
+  
+.particle {
     position: fixed;
+    bottom: -5px;
+    width: 4px;
+    height: 4px;
     background: white;
-    width: 2px;
-    height: 2px;
+    opacity: 0.7;
     border-radius: 50%;
-    animation: twinkle 3s infinite alternate;
-    opacity: 0.8;
+    animation: float linear infinite;
+}
+  
+@keyframes float {
+    to { transform: translateY(-110vh); opacity: 0; }
+}
+  
+.ripple {
+    position: fixed;
+    width: 10px; height: 10px;
+    background: rgba(255,255,255,0.3);
+    border-radius: 50%;
+    transform: translate(-50%,-50%);
+    animation: rippleEffect 0.8s ease-out;
+    pointer-events: none;
+}
+  
+@keyframes rippleEffect {
+    to { transform: scale(15); opacity: 0; }
 }
 
-@keyframes twinkle {
-    from { opacity: 0.2; }
-    to { opacity: 1; }
-}
+section {
+    opacity: 0;
+    animation: fadeIn 1s forwards;
+  }
+  
+  section:nth-of-type(1) { animation-delay: 0.2s; }
+  section:nth-of-type(2) { animation-delay: 0.4s; }
+  section:nth-of-type(3) { animation-delay: 0.6s; }
+  section:nth-of-type(3) { animation-delay: 0.6s; }
+  section:nth-of-type(4) { animation-delay: 0.8s; }
+  section:nth-of-type(5) { animation-delay: 1s; }

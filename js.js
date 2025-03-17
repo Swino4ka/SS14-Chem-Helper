@@ -237,3 +237,31 @@ function createStars(count) {
       document.body.appendChild(star);
   }
 }
+
+document.addEventListener("DOMContentLoaded", () => {
+  generateParticles(100);
+
+  document.body.addEventListener("click", rippleEffect);
+});
+
+function createParticle() {
+  const particle = document.createElement("div");
+  particle.classList.add("particle");
+  particle.style.left = Math.random() * 100 + "vw";
+  particle.style.animationDuration = 5 + Math.random() * 10 + "s";
+  particle.style.animationDelay = Math.random() * -20 + "s";
+  document.body.appendChild(particle);
+}
+
+function generateParticles(amount = 100) {
+  for (let i = 0; i < amount; i++) createParticle();
+}
+
+document.addEventListener("click", (e) => {
+  const ripple = document.createElement("div");
+  ripple.classList.add("ripple");
+  ripple.style.left = e.clientX + "px";
+  ripple.style.top = e.clientY + "px";
+  document.body.appendChild(ripple);
+  setTimeout(() => ripple.remove(), 1000);
+});
