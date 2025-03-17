@@ -222,16 +222,18 @@ document.getElementById('addBtn').addEventListener('click', () => {
 
   quantityInput.value = "";
 });
-document.addEventListener('DOMContentLoaded', function() {
-  const container = document.body;
-  for(let i = 0; i < 100; i++) {
-      const star = document.createElement('div');
-      star.className = 'star';
-      star.style.left = `${Math.random() * 100}%`;
-      star.style.top = `${Math.random() * 100}%`;
-      star.style.width = `${Math.random() * 3}px`;
-      star.style.height = star.style.width;
-      star.style.setProperty('--duration', `${2 + Math.random() * 3}s`);
-      container.appendChild(star);
-  }
+
+document.addEventListener('DOMContentLoaded', () => {
+  createStars(80);
 });
+
+function createStars(count) {
+  for(let i = 0; i < count; i++){
+      const star = document.createElement('div');
+      star.classList.add('star');
+      star.style.top = Math.random() * 100 + 'vh';
+      star.style.left = Math.random() * 100 + 'vw';
+      star.style.animationDuration = (Math.random() * 5 + 3) + 's';
+      document.body.appendChild(star);
+  }
+}
