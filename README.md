@@ -29,9 +29,7 @@ ChemHelper Space Station 14 - это веб-приложение, которое
 3. Нажмите кнопку "Добавить материал", чтобы включить его в расчет.
 4. В разделе "Необходимые реагенты" отобразится итоговый список с рассчитанными данными.
 
-## Контакты
-
-Создатель: Swino4ka
+## Создатель: Swino4ka
 
 Discord: https://discord.com/users/472393576010088449  
 Telegram: https://t.me/Swino4ka  
@@ -39,7 +37,6 @@ Gmail: rybalalka@gmail.com
 Steam: https://steamcommunity.com/profiles/76561198806638670/  
 YouTube: https://www.youtube.com/@swino4ka  
 LinkedIn: https://www.linkedin.com/in/oleksandr-kvartiuk-b24171265  
-GitHub: https://github.com/Swino4ka
 
 ## Лицензия
 
