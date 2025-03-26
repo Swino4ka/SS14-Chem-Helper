@@ -143,7 +143,6 @@ function getBaseReagents(materialName, quantity) {
       result[reagent] = (result[reagent] || 0) + reagentQuantity;
     }
   }
-  
   return result;
 }
 
