@@ -102,7 +102,44 @@ const reactionTemps = {
   "Гидроксид": 310
 };
 
+// Словарь иконок для базовых реагентов
+const reagentIcons = {
+  "Водород": "💧",
+  "Кислород": "🫧",
+  "Азот": "❄️",
+  "Углерод": "⚫",
+  "Хлор": "🟢",
+  "Натрий": "🧂",
+  "Железо": "⚙️",
+  "Кремний": "💎",
+  "Фосфор": "✨",
+  "Калий": "🔮",
+  "Сера": "🟡",
+  "Алюминий": "🥄",
+  "Литий": "💊",
+  "Ртуть": "🌡️",
+  "Радий": "☢️",
+  "Уран": "☢️",
+  "Плазма": "🔆",
+  "Вода": "💦",
+  "Вестин": "💠",
+  "Этанол": "🍶",
+  "Сахар": "🍬",
+  "Йод": "💜",
+  "Медь": "🔶",
+  "Стеллибинин": "🌿",
+  "Алое": "🌱",
+  "Кровь": "🩸",
+  "Кровь Зомби": "🧟",
+  "Фтор": "☁️",
+  "Зола": "🌫️",
+  "Космический Клей": "🪢"
+};
+
 const productionItems = [];
+
+// Добавляем массив для хранения избранных рецептов
+const favoriteItems = JSON.parse(localStorage.getItem('favoriteItems')) || [];
 
 const materialInput = document.getElementById('material');
 const materialsListElem = document.getElementById('materialsList');
@@ -110,6 +147,7 @@ const productionListElem = document.getElementById('productionList');
 const reagentsListElem = document.getElementById('reagentsList');
 const baseReagentsListElem = document.getElementById('baseReagentsList');
 const detailedListElem = document.getElementById('detailedList');
+const favoritesListElem = document.getElementById('favoritesList');
 
 // Заполняем datalist опциями для поиска материалов
 function populateMaterialsList() {
@@ -146,16 +184,113 @@ function updateProductionList() {
     itemText.textContent = `${item.quantity} u ${item.name}`;
     li.appendChild(itemText);
     
+    const buttonsContainer = document.createElement('div');
+    buttonsContainer.classList.add('item-buttons');
+    
+    const favBtn = document.createElement('button');
+    favBtn.textContent = '★';
+    favBtn.title = 'Добавить в избранное';
+    favBtn.classList.add('fav-btn');
+    favBtn.addEventListener('click', (e) => {
+      e.stopPropagation(); // Предотвращаем всплытие события
+      addToFavorites(item.name, item.quantity);
+    });
+    
     const deleteBtn = document.createElement('button');
     deleteBtn.textContent = '✕';
     deleteBtn.classList.add('delete-btn');
-    deleteBtn.addEventListener('click', () => {
+    deleteBtn.addEventListener('click', (e) => {
+      e.stopPropagation(); // Предотвращаем всплытие события
       removeItem(index);
     });
     
-    li.appendChild(deleteBtn);
+    buttonsContainer.appendChild(favBtn);
+    buttonsContainer.appendChild(deleteBtn);
+    li.appendChild(buttonsContainer);
     productionListElem.appendChild(li);
   });
+}
+
+// Функция для добавления рецепта в избранное
+function addToFavorites(name, quantity) {
+  const exists = favoriteItems.some(item => item.name === name && item.quantity === quantity);
+  if (!exists) {
+    favoriteItems.push({ name, quantity });
+    localStorage.setItem('favoriteItems', JSON.stringify(favoriteItems));
+    updateFavoritesList();
+    alert(`${quantity} u ${name} добавлено в избранное`);
+  } else {
+    alert(`${quantity} u ${name} уже в избранном`);
+  }
+}
+
+// Функция для удаления рецепта из избранного
+function removeFromFavorites(index) {
+  const item = favoriteItems[index];
+  favoriteItems.splice(index, 1);
+  localStorage.setItem('favoriteItems', JSON.stringify(favoriteItems));
+  updateFavoritesList();
+  alert(`${item.quantity} u ${item.name} удалено из избранного`);
+}
+
+// Функция для обновления списка избранного
+function updateFavoritesList() {
+  favoritesListElem.innerHTML = "";
+  
+  if (favoriteItems.length === 0) {
+    const emptyMessage = document.createElement('li');
+    emptyMessage.textContent = "Список избранного пуст. Добавьте часто используемые рецепты.";
+    emptyMessage.classList.add('empty-message');
+    favoritesListElem.appendChild(emptyMessage);
+    return;
+  }
+  
+  favoriteItems.forEach((item, index) => {
+    const li = document.createElement('li');
+    
+    const itemText = document.createElement('span');
+    itemText.textContent = `${item.quantity} u ${item.name}`;
+    li.appendChild(itemText);
+    
+    const buttonsContainer = document.createElement('div');
+    buttonsContainer.classList.add('fav-buttons');
+    
+    const useBtn = document.createElement('button');
+    useBtn.textContent = 'Использовать';
+    useBtn.classList.add('use-btn');
+    useBtn.addEventListener('click', (e) => {
+      e.stopPropagation(); // Предотвращаем всплытие события
+      addItemToProduction(item.name, item.quantity);
+    });
+    
+    const deleteBtn = document.createElement('button');
+    deleteBtn.textContent = '✕';
+    deleteBtn.classList.add('delete-btn');
+    deleteBtn.addEventListener('click', (e) => {
+      e.stopPropagation(); // Предотвращаем всплытие события
+      removeFromFavorites(index);
+    });
+    
+    buttonsContainer.appendChild(useBtn);
+    buttonsContainer.appendChild(deleteBtn);
+    li.appendChild(buttonsContainer);
+    favoritesListElem.appendChild(li);
+  });
+}
+
+// Функция для добавления избранного рецепта в список производства
+function addItemToProduction(name, quantity) {
+  productionItems.push({
+    name: name,
+    quantity: quantity
+  });
+
+  updateProductionList();
+  updateReagentsList();
+  updateBaseReagentsList();
+  updateDetailedList();
+  
+  alert(`${quantity} u ${name} добавлено в список производства`);
 }
 
 function removeItem(index) {
@@ -192,7 +327,8 @@ function updateReagentsList() {
   
   for (let reagent of sortedReagents) {
     const li = document.createElement('li');
-    li.textContent = `${reagentsTotal[reagent]} u ${reagent}`;
+    const icon = reagentIcons[reagent] || "🧪";
+    li.innerHTML = `<span class="reagent-icon">${icon}</span> ${reagentsTotal[reagent]} u ${reagent}`;
     reagentsListElem.appendChild(li);
   }
 }
@@ -246,7 +382,8 @@ function updateBaseReagentsList() {
   
   for (let reagent of sortedBaseReagents) {
     const li = document.createElement('li');
-    li.textContent = `${baseTotal[reagent]} u ${reagent}`;
+    const icon = reagentIcons[reagent] || "🧪";
+    li.innerHTML = `<span class="reagent-icon">${icon}</span> ${baseTotal[reagent]} u ${reagent}`;
     baseReagentsListElem.appendChild(li);
   }
 }
@@ -276,7 +413,10 @@ function updateDetailedList() {
   `;
   detailedListElem.appendChild(guideHelp);
   
-  productionItems.forEach(item => {
+  // Реверсируем массив, чтобы новые элементы были сверху
+  const reversedItems = [...productionItems].reverse();
+  
+  reversedItems.forEach(item => {
     const header = document.createElement('h3');
     header.textContent = `Пошаговый гайд: ${item.name}`; 
     detailedListElem.appendChild(header);
@@ -322,7 +462,8 @@ function updateDetailedList() {
         
         for (let ingredient of sortedIngredients) {
           const ingredientItem = document.createElement('li');
-          ingredientItem.textContent = `${ingredient} ${Math.round(step.ingredients[ingredient])}u`;
+          const icon = reagentIcons[ingredient] || "🧪";
+          ingredientItem.innerHTML = `<span class="reagent-icon">${icon}</span> ${ingredient} ${Math.round(step.ingredients[ingredient])}u`;
           ingredientsList.appendChild(ingredientItem);
         }
         
@@ -434,13 +575,114 @@ function addMaterial() {
   quantityInput.focus();
 }
 
+// Функция переключения темы
+function toggleTheme() {
+  const body = document.body;
+  if (body.classList.contains('light-theme')) {
+    body.classList.remove('light-theme');
+    localStorage.setItem('theme', 'dark');
+    document.getElementById('themeToggle').textContent = '☀️';
+  } else {
+    body.classList.add('light-theme');
+    localStorage.setItem('theme', 'light');
+    document.getElementById('themeToggle').textContent = '🌙';
+  }
+}
+
+// Инициализация темы при загрузке
+function initTheme() {
+  const savedTheme = localStorage.getItem('theme') || 'dark';
+  if (savedTheme === 'light') {
+    document.body.classList.add('light-theme');
+    document.getElementById('themeToggle').textContent = '🌙';
+  } else {
+    document.getElementById('themeToggle').textContent = '☀️';
+  }
+}
+
+// Функции экспорта/импорта рецептов
+function exportRecipes() {
+  const data = {
+    items: productionItems,
+    favorites: favoriteItems,
+    timestamp: new Date().toISOString()
+  };
+  
+  const jsonString = JSON.stringify(data);
+  const blob = new Blob([jsonString], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `ss14-chem-recipes-${new Date().toISOString().slice(0,10)}.json`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+  
+  alert('Рецепты успешно экспортированы!');
+}
+
+function importRecipes() {
+  const input = document.createElement('input');
+  input.type = 'file';
+  input.accept = '.json';
+  
+  input.onchange = function(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+    
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      try {
+        const data = JSON.parse(e.target.result);
+        
+        if (data.items && Array.isArray(data.items)) {
+          // Объединяем с существующими элементами
+          productionItems.push(...data.items);
+          updateProductionList();
+          updateReagentsList();
+          updateBaseReagentsList();
+          updateDetailedList();
+        }
+        
+        if (data.favorites && Array.isArray(data.favorites)) {
+          // Объединяем с существующими избранными
+          const newFavorites = data.favorites.filter(newItem => 
+            !favoriteItems.some(item => 
+              item.name === newItem.name && item.quantity === newItem.quantity
+            )
+          );
+          favoriteItems.push(...newFavorites);
+          localStorage.setItem('favoriteItems', JSON.stringify(favoriteItems));
+          updateFavoritesList();
+        }
+        
+        alert('Рецепты успешно импортированы!');
+      } catch (error) {
+        alert('Ошибка при импорте файла: ' + error.message);
+      }
+    };
+    reader.readAsText(file);
+  };
+  
+  input.click();
+}
+
 // Инициализация и обработчики событий
 document.addEventListener('DOMContentLoaded', () => {
+  // Инициализируем тему
+  initTheme();
+  
+  // Добавляем обработчик для кнопки переключения темы
+  document.getElementById('themeToggle').addEventListener('click', toggleTheme);
+  
   populateMaterialsList();
   updateProductionList();
   updateReagentsList();
   updateBaseReagentsList();
   updateDetailedList();
+  updateFavoritesList();
   
   document.getElementById('addBtn').addEventListener('click', addMaterial);
   
