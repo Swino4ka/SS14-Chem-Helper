@@ -401,12 +401,6 @@ h3 {
   color: #333;
 }
 
-/* Стили для иконок реагентов */
-.reagent-icon {
-  margin-right: 8px;
-  display: inline-block;
-}
-
 /* Стили для избранного */
 .fav-btn, .use-btn {
   background: transparent;

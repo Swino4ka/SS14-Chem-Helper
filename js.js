@@ -102,40 +102,6 @@ const reactionTemps = {
   "Гидроксид": 310
 };
 
-// Словарь иконок для базовых реагентов
-const reagentIcons = {
-  "Водород": "💧",
-  "Кислород": "🫧",
-  "Азот": "❄️",
-  "Углерод": "⚫",
-  "Хлор": "🟢",
-  "Натрий": "🧂",
-  "Железо": "⚙️",
-  "Кремний": "💎",
-  "Фосфор": "✨",
-  "Калий": "🔮",
-  "Сера": "🟡",
-  "Алюминий": "🥄",
-  "Литий": "💊",
-  "Ртуть": "🌡️",
-  "Радий": "☢️",
-  "Уран": "☢️",
-  "Плазма": "🔆",
-  "Вода": "💦",
-  "Вестин": "💠",
-  "Этанол": "🍶",
-  "Сахар": "🍬",
-  "Йод": "💜",
-  "Медь": "🔶",
-  "Стеллибинин": "🌿",
-  "Алое": "🌱",
-  "Кровь": "🩸",
-  "Кровь Зомби": "🧟",
-  "Фтор": "☁️",
-  "Зола": "🌫️",
-  "Космический Клей": "🪢"
-};
-
 const productionItems = [];
 
 // Добавляем массив для хранения избранных рецептов
@@ -321,8 +287,7 @@ function updateReagentsList() {
   
   for (let reagent of sortedReagents) {
     const li = document.createElement('li');
-    const icon = reagentIcons[reagent] || "🧪";
-    li.innerHTML = `<span class="reagent-icon">${icon}</span> ${reagentsTotal[reagent]} u ${reagent}`;
+    li.textContent = `${reagentsTotal[reagent]} u ${reagent}`;
     reagentsListElem.appendChild(li);
   }
 }
@@ -376,8 +341,7 @@ function updateBaseReagentsList() {
   
   for (let reagent of sortedBaseReagents) {
     const li = document.createElement('li');
-    const icon = reagentIcons[reagent] || "🧪";
-    li.innerHTML = `<span class="reagent-icon">${icon}</span> ${baseTotal[reagent]} u ${reagent}`;
+    li.textContent = `${baseTotal[reagent]} u ${reagent}`;
     baseReagentsListElem.appendChild(li);
   }
 }
@@ -456,8 +420,7 @@ function updateDetailedList() {
         
         for (let ingredient of sortedIngredients) {
           const ingredientItem = document.createElement('li');
-          const icon = reagentIcons[ingredient] || "🧪";
-          ingredientItem.innerHTML = `<span class="reagent-icon">${icon}</span> ${ingredient} ${Math.round(step.ingredients[ingredient])}u`;
+          ingredientItem.textContent = `${ingredient} ${Math.round(step.ingredients[ingredient])}u`;
           ingredientsList.appendChild(ingredientItem);
         }
         
