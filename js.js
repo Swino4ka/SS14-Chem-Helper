@@ -1,3 +1,4 @@
+// Словарь материалов
 const materials = {
   "Алоксадон": { "Криоксадон": 0.25, "Алое": 0.5, "Сигинат": 0.5 },
   "Амбузол": { "Диловен": 0.25, "Аммиак": 0.25, "Кровь Зомби": 0.5 },
@@ -76,33 +77,71 @@ const materials = {
   "Хлоральгидрат": { "Хлор": 3, "Этанол": 1, "Вода": 1 },
   "Эпинефрин": { "Фенол": 0.25, "Ацетон": 0.25, "Хлор": 0.25, "Гидроксид": 0.25 },
   "Этилоксиэфедрин": { "Дезоксиэфедрин": 0.5, "Стеллибинин": 0.5 },
-  "Эфедрин": { "Масло": 0.25, "Водород": 0.25, "Сахар": 0.25, "Диэтиламин": 0.25 },
-  "Робаст харвест": { "EZ-нутриенты": 0.5, "Серная кислота": 0.5 },
-  "EZ-нутриенты": {"Калий": 0.333333, "Фосфор": 0.333333, "Азот": 0.333333}
+  "Эфедрин": { "Масло": 0.25, "Водород": 0.25, "Сахар": 0.25, "Диэтиламин": 0.25 }
 };
 
 const productionItems = [];
 
-const materialSelect = document.getElementById('material');
+const materialInput = document.getElementById('material');
+const materialsListElem = document.getElementById('materialsList');
 const productionListElem = document.getElementById('productionList');
 const reagentsListElem = document.getElementById('reagentsList');
 const baseReagentsListElem = document.getElementById('baseReagentsList');
 const detailedListElem = document.getElementById('detailedList');
 
-for (let material in materials) {
-  const option = document.createElement('option');
-  option.value = material;
-  option.textContent = material;
-  materialSelect.appendChild(option);
+
+function populateMaterialsList() {
+  materialsListElem.innerHTML = '';
+  const sortedMaterials = Object.keys(materials).sort();
+  
+  for (let material of sortedMaterials) {
+    const option = document.createElement('option');
+    option.value = material;
+    materialsListElem.appendChild(option);
+  }
+}
+
+
+function isMaterialValid(materialName) {
+  return materials.hasOwnProperty(materialName);
 }
 
 function updateProductionList() {
   productionListElem.innerHTML = "";
-  productionItems.forEach(item => {
+  
+  if (productionItems.length === 0) {
+    const emptyMessage = document.createElement('li');
+    emptyMessage.textContent = "Список пуст. Добавьте материалы для расчета.";
+    emptyMessage.classList.add('empty-message');
+    productionListElem.appendChild(emptyMessage);
+    return;
+  }
+  
+  productionItems.forEach((item, index) => {
     const li = document.createElement('li');
-    li.textContent = `${item.quantity} u ${item.name}`;
+    
+    const itemText = document.createElement('span');
+    itemText.textContent = `${item.quantity} u ${item.name}`;
+    li.appendChild(itemText);
+    
+    const deleteBtn = document.createElement('button');
+    deleteBtn.textContent = '✕';
+    deleteBtn.classList.add('delete-btn');
+    deleteBtn.addEventListener('click', () => {
+      removeItem(index);
+    });
+    
+    li.appendChild(deleteBtn);
     productionListElem.appendChild(li);
   });
+}
+
+function removeItem(index) {
+  productionItems.splice(index, 1);
+  updateProductionList();
+  updateReagentsList();
+  updateBaseReagentsList();
+  updateDetailedList();
 }
 
 function updateReagentsList() {
@@ -115,9 +154,21 @@ function updateReagentsList() {
       reagentsTotal[reagent] = (reagentsTotal[reagent] || 0) + amount;
     }
   });
-    
+  
   reagentsListElem.innerHTML = "";
-  for (let reagent in reagentsTotal) {
+  
+  if (Object.keys(reagentsTotal).length === 0) {
+    const emptyMessage = document.createElement('li');
+    emptyMessage.textContent = "Добавьте материалы для расчета необходимых реагентов.";
+    emptyMessage.classList.add('empty-message');
+    reagentsListElem.appendChild(emptyMessage);
+    return;
+  }
+  
+
+  const sortedReagents = Object.keys(reagentsTotal).sort();
+  
+  for (let reagent of sortedReagents) {
     const li = document.createElement('li');
     li.textContent = `${reagentsTotal[reagent]} u ${reagent}`;
     reagentsListElem.appendChild(li);
@@ -143,6 +194,7 @@ function getBaseReagents(materialName, quantity) {
       result[reagent] = (result[reagent] || 0) + reagentQuantity;
     }
   }
+  
   return result;
 }
 
@@ -158,55 +210,178 @@ function updateBaseReagentsList() {
   });
   
   baseReagentsListElem.innerHTML = "";
-  for (let reagent in baseTotal) {
+  
+  if (Object.keys(baseTotal).length === 0) {
+    const emptyMessage = document.createElement('li');
+    emptyMessage.textContent = "Добавьте материалы для расчета базовых реагентов.";
+    emptyMessage.classList.add('empty-message');
+    baseReagentsListElem.appendChild(emptyMessage);
+    return;
+  }
+  
+
+  const sortedBaseReagents = Object.keys(baseTotal).sort();
+  
+  for (let reagent of sortedBaseReagents) {
+
     const li = document.createElement('li');
     li.textContent = `${baseTotal[reagent]} u ${reagent}`;
     baseReagentsListElem.appendChild(li);
   }
 }
 
-function buildMaterialTree(materialName, quantity) {
-  const li = document.createElement('li');
-  
-  const displayQuantity = materialName.toLowerCase() === 'плазма' ? 1 : Math.round(quantity);
-  li.textContent = `${materialName} ${displayQuantity}u`;
-
-  if (materials.hasOwnProperty(materialName)) {
-    const composition = materials[materialName];
-    const ul = document.createElement('ul');
-    for (let reagent in composition) {
-      const reagentQuantity = materialName.toLowerCase() === 'плазма' ? 1 : quantity * composition[reagent];
-      const childLi = buildMaterialTree(reagent, reagentQuantity);
-      ul.appendChild(childLi);
-    }
-    li.appendChild(ul);
-  }
-  return li;
-}
-
-
 function updateDetailedList() {
   detailedListElem.innerHTML = "";
   
+  if (productionItems.length === 0) {
+    const emptyMessage = document.createElement('p');
+    emptyMessage.textContent = "Добавьте материалы для отображения подробного состава.";
+    emptyMessage.classList.add('empty-message');
+    detailedListElem.appendChild(emptyMessage);
+    return;
+  }
+  
+
+  const guideHelp = document.createElement('div');
+  guideHelp.classList.add('guide-help');
+  guideHelp.innerHTML = `
+    <p>Как использовать пошаговый гайд:</p>
+    <ol>
+      <li>Начните с первого шага (верхнего).</li>
+      <li>Для каждого шага: сначала соберите все ингредиенты из списка, затем смешайте их для получения продукта.</li>
+      <li>Переходите к следующему шагу, используя компоненты, полученные на предыдущих шагах.</li>
+    </ol>
+  `;
+  detailedListElem.appendChild(guideHelp);
+  
   productionItems.forEach(item => {
     const header = document.createElement('h3');
-    header.textContent = item.name; 
+    header.textContent = `Пошаговый гайд: ${item.name}`; 
     detailedListElem.appendChild(header);
     
-    const tree = document.createElement('ul');
-    const treeElement = buildMaterialTree(item.name, item.quantity, true);
-    tree.appendChild(treeElement);
-    detailedListElem.appendChild(tree);
+
+    const craftingSteps = generateCraftingSteps(item.name, item.quantity);
+    
+
+    const stepsContainer = document.createElement('div');
+    stepsContainer.classList.add('crafting-steps');
+    
+
+    craftingSteps.forEach((step, index) => {
+      const stepElement = document.createElement('div');
+      stepElement.classList.add('crafting-step');
+      
+      const stepNumber = document.createElement('div');
+      stepNumber.classList.add('step-number');
+      stepNumber.textContent = index + 1 + '.';
+      
+      const stepContent = document.createElement('div');
+      stepContent.classList.add('step-content');
+      
+
+      const stepTitle = document.createElement('div');
+      stepTitle.classList.add('step-title');
+      stepTitle.textContent = `${step.product} ${Math.round(step.quantity)}u`;
+      stepContent.appendChild(stepTitle);
+      
+
+      if (step.ingredients && Object.keys(step.ingredients).length > 0) {
+        const ingredientsList = document.createElement('ul');
+        ingredientsList.classList.add('step-ingredients');
+        
+        const sortedIngredients = Object.keys(step.ingredients).sort();
+        
+        for (let ingredient of sortedIngredients) {
+          const ingredientItem = document.createElement('li');
+          ingredientItem.textContent = `${ingredient} ${Math.round(step.ingredients[ingredient])}u`;
+          ingredientsList.appendChild(ingredientItem);
+        }
+        
+        stepContent.appendChild(ingredientsList);
+      }
+      
+      stepElement.appendChild(stepNumber);
+      stepElement.appendChild(stepContent);
+      stepsContainer.appendChild(stepElement);
+    });
+    
+    detailedListElem.appendChild(stepsContainer);
   });
 }
 
-document.getElementById('addBtn').addEventListener('click', () => {
+
+function generateCraftingSteps(materialName, quantity) {
+
+  const steps = [];
+
+  const addedMaterials = new Map();
+  
+
+  function processMaterialHierarchy(name, amount, depth = 0) {
+    if (!materials.hasOwnProperty(name)) {
+      return;
+    }
+    
+
+    const composition = materials[name];
+    
+
+    for (let ingredient in composition) {
+      const ingredientAmount = amount * composition[ingredient];
+      
+      if (materials.hasOwnProperty(ingredient)) {
+        processMaterialHierarchy(ingredient, ingredientAmount, depth + 1);
+      }
+    }
+    
+
+    if (!addedMaterials.has(name)) {
+      addedMaterials.set(name, amount);
+      const step = {
+        product: name,
+        quantity: amount,
+        ingredients: {}
+      };
+      
+      for (let ingredient in composition) {
+        step.ingredients[ingredient] = amount * composition[ingredient];
+      }
+      
+      steps.push(step);
+    } else {
+      const currentAmount = addedMaterials.get(name);
+      if (amount > currentAmount) {
+        const stepIndex = steps.findIndex(step => step.product === name);
+        if (stepIndex !== -1) {
+          const step = steps[stepIndex];
+          step.quantity = amount;
+          
+          for (let ingredient in materials[name]) {
+            step.ingredients[ingredient] = amount * materials[name][ingredient];
+          }
+        }
+        addedMaterials.set(name, amount);
+      }
+    }
+  }
+  
+  processMaterialHierarchy(materialName, quantity);
+  
+  return steps;
+}
+
+function addMaterial() {
   const quantityInput = document.getElementById('quantity');
   const quantity = parseFloat(quantityInput.value);
-  const materialName = materialSelect.value;
+  const materialName = materialInput.value.trim();
 
   if (!quantity || quantity <= 0) {
     alert("Введите корректное количество.");
+    return;
+  }
+
+  if (!isMaterialValid(materialName)) {
+    alert(`Материал "${materialName}" не найден. Пожалуйста, выберите материал из списка.`);
     return;
   }
 
@@ -221,47 +396,36 @@ document.getElementById('addBtn').addEventListener('click', () => {
   updateDetailedList();
 
   quantityInput.value = "";
-});
+  materialInput.value = "";
+  quantityInput.focus();
+}
+
 
 document.addEventListener('DOMContentLoaded', () => {
-  createStars(80);
-});
+  populateMaterialsList();
+  updateProductionList();
+  updateReagentsList();
+  updateBaseReagentsList();
+  updateDetailedList();
+  
+  document.getElementById('addBtn').addEventListener('click', addMaterial);
+  
 
-function createStars(count) {
-  for(let i = 0; i < count; i++){
-      const star = document.createElement('div');
-      star.classList.add('star');
-      star.style.top = Math.random() * 100 + 'vh';
-      star.style.left = Math.random() * 100 + 'vw';
-      star.style.animationDuration = (Math.random() * 5 + 3) + 's';
-      document.body.appendChild(star);
-  }
-}
-
-document.addEventListener("DOMContentLoaded", () => {
-  generateParticles(100);
-
-  document.body.addEventListener("click", rippleEffect);
-});
-
-function createParticle() {
-  const particle = document.createElement("div");
-  particle.classList.add("particle");
-  particle.style.left = Math.random() * 100 + "vw";
-  particle.style.animationDuration = 5 + Math.random() * 10 + "s";
-  particle.style.animationDelay = Math.random() * -20 + "s";
-  document.body.appendChild(particle);
-}
-
-function generateParticles(amount = 100) {
-  for (let i = 0; i < amount; i++) createParticle();
-}
-
-document.addEventListener("click", (e) => {
-  const ripple = document.createElement("div");
-  ripple.classList.add("ripple");
-  ripple.style.left = e.clientX + "px";
-  ripple.style.top = e.clientY + "px";
-  document.body.appendChild(ripple);
-  setTimeout(() => ripple.remove(), 1000);
+  materialInput.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      addMaterial();
+    }
+  });
+  
+  document.getElementById('quantity').addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      if (materialInput.value) {
+        addMaterial();
+      } else {
+        materialInput.focus();
+      }
+    }
+  });
 });
