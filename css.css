@@ -456,18 +456,6 @@ h3 {
   margin-right: 10px;
 }
 
-/* Кнопки экспорта/импорта */
-.export-import-buttons {
-  display: flex;
-  justify-content: center;
-  gap: 10px;
-  margin: 10px 0 20px;
-}
-
-.export-import-buttons button {
-  max-width: 200px;
-}
-
 ul#favoritesList li {
   background: #2a303e;
   border-radius: 4px;
