@@ -262,32 +262,6 @@ h3 {
     }
 }
 
-.guide-help {
-    background: #343c4d;
-    border-radius: 6px;
-    padding: 15px 20px;
-    margin-bottom: 20px;
-    font-size: 14px;
-    border-left: 3px solid #4876b2;
-}
-
-.guide-help p {
-    margin-top: 0;
-    margin-bottom: 8px;
-    font-weight: 600;
-    color: #a8c5e9;
-}
-
-.guide-help ol {
-    margin: 0;
-    padding-left: 25px;
-}
-
-.guide-help li {
-    margin-bottom: 5px;
-    line-height: 1.4;
-}
-
 /* Стили для светлой темы */
 .light-theme {
   color: #333;
@@ -364,15 +338,6 @@ h3 {
 
 .light-theme footer a:hover {
   color: #1a365d;
-}
-
-.light-theme .guide-help {
-  background: #f1f5f9;
-  border-left: 3px solid #3182ce;
-}
-
-.light-theme .guide-help p {
-  color: #2c5282;
 }
 
 /* Стили для кнопки переключения темы */
