@@ -218,9 +218,6 @@ function addToFavorites(name, quantity) {
     favoriteItems.push({ name, quantity });
     localStorage.setItem('favoriteItems', JSON.stringify(favoriteItems));
     updateFavoritesList();
-    alert(`${quantity} u ${name} добавлено в избранное`);
-  } else {
-    alert(`${quantity} u ${name} уже в избранном`);
   }
 }
 
@@ -230,7 +227,6 @@ function removeFromFavorites(index) {
   favoriteItems.splice(index, 1);
   localStorage.setItem('favoriteItems', JSON.stringify(favoriteItems));
   updateFavoritesList();
-  alert(`${item.quantity} u ${item.name} удалено из избранного`);
 }
 
 // Функция для обновления списка избранного
@@ -289,8 +285,6 @@ function addItemToProduction(name, quantity) {
   updateReagentsList();
   updateBaseReagentsList();
   updateDetailedList();
-  
-  alert(`${quantity} u ${name} добавлено в список производства`);
 }
 
 function removeItem(index) {
@@ -551,12 +545,10 @@ function addMaterial() {
   const materialName = materialInput.value.trim();
 
   if (!quantity || quantity <= 0) {
-    alert("Введите корректное количество.");
     return;
   }
 
   if (!isMaterialValid(materialName)) {
-    alert(`Материал "${materialName}" не найден. Пожалуйста, выберите материал из списка.`);
     return;
   }
 
@@ -619,8 +611,6 @@ function exportRecipes() {
   a.click();
   document.body.removeChild(a);
   URL.revokeObjectURL(url);
-  
-  alert('Рецепты успешно экспортированы!');
 }
 
 function importRecipes() {
@@ -657,10 +647,8 @@ function importRecipes() {
           localStorage.setItem('favoriteItems', JSON.stringify(favoriteItems));
           updateFavoritesList();
         }
-        
-        alert('Рецепты успешно импортированы!');
       } catch (error) {
-        alert('Ошибка при импорте файла: ' + error.message);
+        console.error('Ошибка при импорте файла:', error.message);
       }
     };
     reader.readAsText(file);
