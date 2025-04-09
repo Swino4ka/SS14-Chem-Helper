@@ -53,7 +53,7 @@ button:active {
 input[type="number"], 
 input[type="text"],
 select {
-    width: 100%;
+    width: 98%;
     padding: 10px;
     border-radius: 4px;
     background: #232836;
@@ -63,7 +63,7 @@ select {
 }
   
 input[type="number"] {
-    width: 97.7%;
+    width: 98%;
 }
 
 input:focus, select:focus {
@@ -223,6 +223,19 @@ h3 {
     font-weight: 600;
     color: #a8c5e9;
     margin-bottom: 8px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.temp-req {
+    font-size: 0.85em;
+    background-color: rgba(216, 88, 40, 0.3);
+    color: #ffc107;
+    padding: 2px 8px;
+    border-radius: 4px;
+    margin-left: 10px;
+    border-left: 2px solid #ffc107;
 }
 
 .step-ingredients {
