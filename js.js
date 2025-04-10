@@ -577,3 +577,27 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 });
+
+document.addEventListener("DOMContentLoaded", () => {
+  generateParticles(80);
+});
+
+function generateParticles(count) {
+  for(let i=0; i<count; i++){
+    const p = document.createElement('div');
+    p.className = 'particle';
+    p.style.left = Math.random()*100 + 'vw';
+    p.style.animationDuration = (Math.random()*5+5)+'s';
+    p.style.animationDelay = -(Math.random()*10)+'s';
+    document.body.appendChild(p);
+  }
+}
+
+document.addEventListener("click", (e)=>{
+  const ripple=document.createElement("div");
+  ripple.className="ripple";
+  ripple.style.left=e.clientX+"px";
+  ripple.style.top=e.clientY+"px";
+  document.body.appendChild(ripple);
+  setTimeout(()=>ripple.remove(),1000);
+});
