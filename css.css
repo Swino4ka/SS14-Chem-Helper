@@ -1,15 +1,38 @@
 body {
-    font-family: "Geologica", sans-serif;
-    color: #e1e5eb;
-    background-color: #1a1f2c;
-    background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23353a47' fill-opacity='0.4'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
-    padding: 20px 30px;
-    overflow-x: hidden;
-    max-width: 900px;
-    margin: 0 auto 50px auto; 
-    box-sizing: border-box;
-    box-shadow: 0 0 30px rgba(0,0,0,0.3);
-    border-radius: 0 0 10px 10px;
+  font-family: "Geologica", sans-serif;
+  color: #e1e5eb;
+  background: linear-gradient(-45deg, #1b1229, #150f2b, #231746, #0f0820);
+  background-size: 400% 400%;
+  animation: bgMove 20s ease infinite alternate;
+  padding: 20px 30px;
+  overflow-x: hidden;
+  max-width: 900px;
+  margin: 0 auto 50px auto; 
+  box-sizing: border-box;
+  position: relative;
+}
+
+@keyframes bgMove {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.particle {
+  position: fixed;
+  bottom: -5px;
+  width: 4px;
+  height: 4px;
+  background: rgba(255,255,255,0.8);
+  opacity: 0.8;
+  border-radius: 50%;
+  animation: float linear infinite;
+  pointer-events: none;
+  z-index: -1;
+}
+
+@keyframes float {
+  to { transform: translateY(-110vh); opacity: 0; }
 }
 
 h1, h2 {
@@ -410,7 +433,6 @@ h3 {
 }
 
 .favorites-section h2:before {
-  content: "★";
   color: #ffc107;
   margin-right: 10px;
 }
@@ -424,17 +446,6 @@ ul#favoritesList li {
   display: flex;
   justify-content: space-between;
   align-items: center;
-}
-
-.particle {
-  position: fixed;
-  bottom: -5px;
-  width: 4px;
-  height: 4px;
-  background: white;
-  opacity: 0.7;
-  border-radius: 50%;
-  animation: float linear infinite;
 }
 
 .ripple {
