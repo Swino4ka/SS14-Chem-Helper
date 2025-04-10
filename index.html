@@ -11,6 +11,8 @@
   <link href="https://fonts.googleapis.com/css2?family=Geologica:wght@100..900&display=swap" rel="stylesheet">
 </head>
 <body>
+  <!-- Кнопка переключения темы -->
+  <button id="themeToggle" title="Переключить тему">☀️</button>
 
   <h1>🧬 ChemHelper Space Station 14</h1>
   
@@ -21,7 +23,7 @@
     </div>
 
     <div class="form-group">
-      <label for="material">Найти материал:</label>
+      <label for="material">Название препарата:</label>
       <input type="text" id="material" list="materialsList" placeholder="Начните вводить название вещества">
       <datalist id="materialsList"></datalist>
     </div>
@@ -32,6 +34,12 @@
   <section>
     <h2>📋 Список материалов</h2>
     <ul id="productionList"></ul>
+  </section>
+
+  <!-- Секция избранного -->
+  <section class="favorites-section">
+    <h2>⭐ Избранные рецепты</h2>
+    <ul id="favoritesList"></ul>
   </section>
 
   <section>
