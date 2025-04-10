@@ -106,7 +106,6 @@ const productionItems = [];
 
 // Добавляем массив для хранения избранных рецептов
 const favoriteItems = JSON.parse(localStorage.getItem('favoriteItems')) || [];
-
 const materialInput = document.getElementById('material');
 const materialsListElem = document.getElementById('materialsList');
 const productionListElem = document.getElementById('productionList');
@@ -543,30 +542,27 @@ function initTheme() {
 
 // Инициализация и обработчики событий
 document.addEventListener('DOMContentLoaded', () => {
-  // Инициализируем тему
-  initTheme();
-  
-  // Добавляем обработчик для кнопки переключения темы
-  document.getElementById('themeToggle').addEventListener('click', toggleTheme);
-  
-  populateMaterialsList();
-  updateProductionList();
-  updateReagentsList();
-  updateBaseReagentsList();
-  updateDetailedList();
-  updateFavoritesList();
-  
-  document.getElementById('addBtn').addEventListener('click', addMaterial);
-  
-  // Добавление материала по нажатию Enter в поле ввода
-  materialInput.addEventListener('keydown', (e) => {
-    if (e.key === 'Enter') {
-      e.preventDefault();
-      addMaterial();
-    }
-  });
-  
-  document.getElementById('quantity').addEventListener('keydown', (e) => {
+initTheme();
+
+document.getElementById('themeToggle').addEventListener('click', toggleTheme);
+
+populateMaterialsList();
+updateProductionList();
+updateReagentsList();
+updateBaseReagentsList();
+updateDetailedList();
+updateFavoritesList();
+
+document.getElementById('addBtn').addEventListener('click', addMaterial);
+
+materialInput.addEventListener('keydown', (e) => {
+  if (e.key === 'Enter') {
+    e.preventDefault();
+    addMaterial();
+  }
+});
+
+document.getElementById('quantity').addEventListener('keydown', (e) => {
     if (e.key === 'Enter') {
       e.preventDefault();
       if (materialInput.value) {
