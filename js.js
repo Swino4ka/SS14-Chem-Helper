@@ -10,7 +10,6 @@ const materials = {
   "Бикаридин": { "Инапровалин": 0.5, "Углерод": 0.5 },
   "Бритвиум": { "Лацеринол": 1, "Бикаридин": 1 },
   "Бруизин": { "Бикаридин": 0.5, "Литий": 0.45, "Сахар": 0.5 },
-  "Вестин": { "Плазма": 0.5 },
   "Галоперидол": { "Алюминий": 0.2, "Хлор": 0.2, "Фтор": 0.2, "Сварочное Топливо": 0.2, "Йодид Калия": 0.2 },
   "Гидроксид": { "Кислород": 0.5, "Водород": 0.5 },
   "Гидроксид Натрия": { "Гидроксид": 0.5, "Натрий": 0.5 },
@@ -108,7 +107,6 @@ const productionItems = [];
 
 // Добавляем массив для хранения избранных рецептов
 const favoriteItems = JSON.parse(localStorage.getItem('favoriteItems')) || [];
-const materialInput = document.getElementById('material');
 const materialsListElem = document.getElementById('materialsList');
 const productionListElem = document.getElementById('productionList');
 const reagentsListElem = document.getElementById('reagentsList');
@@ -138,13 +136,14 @@ function updateProductionList() {
   
   if (productionItems.length === 0) {
     const emptyMessage = document.createElement('li');
-    emptyMessage.textContent = "Список пуст. Добавьте материалы для расчета.";
+    emptyMessage.textContent = "Список пуст. Добавьте препараты для расчета.";
     emptyMessage.classList.add('empty-message');
     productionListElem.appendChild(emptyMessage);
     return;
   }
   
-  productionItems.forEach((item, index) => {
+  // Обрабатываем массив в обратном порядке, чтобы новые элементы были сверху
+  [...productionItems].reverse().forEach((item, index) => {
     const li = document.createElement('li');
     
     const itemText = document.createElement('span');
@@ -168,7 +167,8 @@ function updateProductionList() {
     deleteBtn.classList.add('delete-btn');
     deleteBtn.addEventListener('click', (e) => {
       e.stopPropagation(); // Предотвращаем всплытие события
-      removeItem(index);
+      // Вычисляем реальный индекс, учитывая обратный порядок отображения
+      removeItem(productionItems.length - 1 - index);
     });
     
     buttonsContainer.appendChild(favBtn);
@@ -277,7 +277,7 @@ function updateReagentsList() {
   
   if (Object.keys(reagentsTotal).length === 0) {
     const emptyMessage = document.createElement('li');
-    emptyMessage.textContent = "Добавьте материалы для расчета необходимых реагентов.";
+    emptyMessage.textContent = "Добавьте препараты для расчета необходимых реагентов.";
     emptyMessage.classList.add('empty-message');
     reagentsListElem.appendChild(emptyMessage);
     return;
@@ -331,7 +331,7 @@ function updateBaseReagentsList() {
   
   if (Object.keys(baseTotal).length === 0) {
     const emptyMessage = document.createElement('li');
-    emptyMessage.textContent = "Добавьте материалы для расчета базовых реагентов.";
+    emptyMessage.textContent = "Добавьте препараты для расчета базовых реагентов.";
     emptyMessage.classList.add('empty-message');
     baseReagentsListElem.appendChild(emptyMessage);
     return;
@@ -352,7 +352,7 @@ function updateDetailedList() {
   
   if (productionItems.length === 0) {
     const emptyMessage = document.createElement('p');
-    emptyMessage.textContent = "Добавьте материалы для отображения подробного состава.";
+    emptyMessage.textContent = "Добавьте препараты для отображения подробного состава.";
     emptyMessage.classList.add('empty-message');
     detailedListElem.appendChild(emptyMessage);
     return;
@@ -489,32 +489,77 @@ function generateCraftingSteps(materialName, quantity) {
   return steps;
 }
 
+function showNotification(message) {
+  const notification = document.createElement('div');
+  notification.className = 'notification';
+  notification.textContent = message;
+  document.body.appendChild(notification);
+  
+  setTimeout(() => {
+    notification.classList.add('show');
+  }, 100);
+  
+  setTimeout(() => {
+    notification.classList.remove('show');
+    setTimeout(() => {
+      notification.remove();
+    }, 300);
+  }, 3000);
+}
+
+function highlightError(element) {
+  element.classList.add('error-highlight');
+  setTimeout(() => {
+    element.classList.remove('error-highlight');
+  }, 3000);
+}
+
 function addMaterial() {
-  const quantityInput = document.getElementById('quantity');
-  const quantity = parseFloat(quantityInput.value);
-  const materialName = materialInput.value.trim();
-
-  if (!quantity || quantity <= 0) {
+  const materialInput = document.getElementById('material').value.trim();
+  const quantity = parseFloat(document.getElementById('quantity').value);
+  
+  if (!materialInput) {
+    const input = document.getElementById('material');
+    highlightError(input);
+    showNotification('Введите название материала');
     return;
   }
-
-  if (!isMaterialValid(materialName)) {
+  
+  if (isNaN(quantity) || quantity <= 0) {
+    const input = document.getElementById('quantity');
+    highlightError(input);
+    showNotification('Введите корректное количество');
     return;
   }
-
+  
+  // Сохраняем последнее введенное количество в localStorage
+  localStorage.setItem('lastQuantity', quantity);
+  
+  // Проверяем существование материала в словаре материалов с учетом регистра
+  const materialName = Object.keys(materials).find(m => 
+    m.toLowerCase() === materialInput.toLowerCase()
+  );
+  
+  if (!materialName) {
+    const input = document.getElementById('material');
+    highlightError(input);
+    showNotification('Материал не найден');
+    return;
+  }
+  
   productionItems.push({
-    name: materialName,
+    name: materialName, // Используем правильный регистр из словаря
     quantity: quantity
   });
-
+  
   updateProductionList();
   updateReagentsList();
   updateBaseReagentsList();
   updateDetailedList();
-
-  quantityInput.value = "";
-  materialInput.value = "";
-  quantityInput.focus();
+  
+  document.getElementById('material').value = '';
+  // Оставляем значение quantity, не очищаем его
+  document.getElementById('material').focus(); // Переводим фокус на поле материала
 }
 
 // Функция переключения темы
@@ -544,39 +589,44 @@ function initTheme() {
 
 // Инициализация и обработчики событий
 document.addEventListener('DOMContentLoaded', () => {
-initTheme();
-
-document.getElementById('themeToggle').addEventListener('click', toggleTheme);
-
-populateMaterialsList();
-updateProductionList();
-updateReagentsList();
-updateBaseReagentsList();
-updateDetailedList();
-updateFavoritesList();
-
-document.getElementById('addBtn').addEventListener('click', addMaterial);
-
-materialInput.addEventListener('keydown', (e) => {
-  if (e.key === 'Enter') {
-    e.preventDefault();
-    addMaterial();
+  initTheme();
+  
+  document.getElementById('themeToggle').addEventListener('click', toggleTheme);
+  
+  // Восстанавливаем последнее введенное количество, если оно существует
+  const lastQuantity = localStorage.getItem('lastQuantity');
+  if (lastQuantity) {
+    document.getElementById('quantity').value = lastQuantity;
   }
-});
-
-document.getElementById('quantity').addEventListener('keydown', (e) => {
+  
+  populateMaterialsList();
+  updateProductionList();
+  updateReagentsList();
+  updateBaseReagentsList();
+  updateDetailedList();
+  updateFavoritesList();
+  
+  document.getElementById('addBtn').addEventListener('click', addMaterial);
+  
+  document.getElementById('material').addEventListener('keydown', (e) => {
     if (e.key === 'Enter') {
       e.preventDefault();
-      if (materialInput.value) {
+      addMaterial();
+    }
+  });
+  
+  document.getElementById('quantity').addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      if (document.getElementById('material').value) {
         addMaterial();
       } else {
-        materialInput.focus();
+        document.getElementById('material').focus();
       }
     }
   });
-});
-
-document.addEventListener("DOMContentLoaded", () => {
+  
+  // Генерация частиц для фона
   generateParticles(80);
 });
 
