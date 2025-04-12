@@ -105,7 +105,6 @@ const reactionTemps = {
 
 const productionItems = [];
 
-// Добавляем массив для хранения избранных рецептов
 const favoriteItems = JSON.parse(localStorage.getItem('favoriteItems')) || [];
 const materialsListElem = document.getElementById('materialsList');
 const productionListElem = document.getElementById('productionList');
@@ -114,7 +113,6 @@ const baseReagentsListElem = document.getElementById('baseReagentsList');
 const detailedListElem = document.getElementById('detailedList');
 const favoritesListElem = document.getElementById('favoritesList');
 
-// Заполняем datalist опциями для поиска материалов
 function populateMaterialsList() {
   materialsListElem.innerHTML = '';
   const sortedMaterials = Object.keys(materials).sort();
@@ -126,7 +124,6 @@ function populateMaterialsList() {
   }
 }
 
-// Проверка валидности выбранного материала
 function isMaterialValid(materialName) {
   return materials.hasOwnProperty(materialName);
 }
