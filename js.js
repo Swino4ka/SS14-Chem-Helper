@@ -139,7 +139,6 @@ function updateProductionList() {
     return;
   }
   
-  // Обрабатываем массив в обратном порядке, чтобы новые элементы были сверху
   [...productionItems].reverse().forEach((item, index) => {
     const li = document.createElement('li');
     
@@ -163,8 +162,7 @@ function updateProductionList() {
     deleteBtn.textContent = '✕';
     deleteBtn.classList.add('delete-btn');
     deleteBtn.addEventListener('click', (e) => {
-      e.stopPropagation(); // Предотвращаем всплытие события
-      // Вычисляем реальный индекс, учитывая обратный порядок отображения
+      e.stopPropagation(); 
       removeItem(productionItems.length - 1 - index);
     });
     
@@ -175,7 +173,6 @@ function updateProductionList() {
   });
 }
 
-// Функция для добавления рецепта в избранное
 function addToFavorites(name, quantity) {
   const exists = favoriteItems.some(item => item.name === name && item.quantity === quantity);
   if (!exists) {
@@ -185,7 +182,6 @@ function addToFavorites(name, quantity) {
   }
 }
 
-// Функция для удаления рецепта из избранного
 function removeFromFavorites(index) {
   const item = favoriteItems[index];
   favoriteItems.splice(index, 1);
@@ -193,7 +189,6 @@ function removeFromFavorites(index) {
   updateFavoritesList();
 }
 
-// Функция для обновления списка избранного
 function updateFavoritesList() {
   favoritesListElem.innerHTML = "";
   
@@ -238,7 +233,6 @@ function updateFavoritesList() {
   });
 }
 
-// Функция для добавления избранного рецепта в список производства
 function addItemToProduction(name, quantity) {
   productionItems.push({
     name: name,
@@ -280,7 +274,6 @@ function updateReagentsList() {
     return;
   }
   
-  // Сортируем реагенты по алфавиту
   const sortedReagents = Object.keys(reagentsTotal).sort();
   
   for (let reagent of sortedReagents) {
@@ -334,7 +327,6 @@ function updateBaseReagentsList() {
     return;
   }
   
-  // Сортируем базовые реагенты по алфавиту
   const sortedBaseReagents = Object.keys(baseTotal).sort();
   
   for (let reagent of sortedBaseReagents) {
@@ -355,7 +347,6 @@ function updateDetailedList() {
     return;
   }
   
-  // Реверсируем массив, чтобы новые элементы были сверху
   const reversedItems = [...productionItems].reverse();
   
   reversedItems.forEach(item => {
@@ -363,14 +354,11 @@ function updateDetailedList() {
     header.textContent = `Пошаговый гайд: ${item.name}`; 
     detailedListElem.appendChild(header);
     
-    // Получаем шаги для изготовления препарата
     const craftingSteps = generateCraftingSteps(item.name, item.quantity);
     
-    // Создаём контейнер для шагов
     const stepsContainer = document.createElement('div');
     stepsContainer.classList.add('crafting-steps');
     
-    // Добавляем шаги в правильном порядке (от базовых к сложным)
     craftingSteps.forEach((step, index) => {
       const stepElement = document.createElement('div');
       stepElement.classList.add('crafting-step');
