@@ -370,11 +370,9 @@ function updateDetailedList() {
       const stepContent = document.createElement('div');
       stepContent.classList.add('step-content');
       
-      // Добавляем название основного продукта в шаге
       const stepTitle = document.createElement('div');
       stepTitle.classList.add('step-title');
       
-      // Проверяем, нужна ли для этого шага особая температура
       if (reactionTemps[step.product]) {
         stepTitle.innerHTML = `${step.product} ${Math.round(step.quantity)}u <span class="temp-req">🔥 ${reactionTemps[step.product]}K</span>`;
       } else {
@@ -383,7 +381,6 @@ function updateDetailedList() {
       
       stepContent.appendChild(stepTitle);
       
-      // Добавляем ингредиенты для этого шага
       if (step.ingredients && Object.keys(step.ingredients).length > 0) {
         const ingredientsList = document.createElement('ul');
         ingredientsList.classList.add('step-ingredients');
@@ -408,20 +405,15 @@ function updateDetailedList() {
   });
 }
 
-// Функция для генерации шагов по изготовлению препарата
 function generateCraftingSteps(materialName, quantity) {
-  // Результирующий массив шагов
   const steps = [];
-  // Объект для отслеживания уже добавленных шагов
   const addedMaterials = new Map();
   
-  // Функция для сортировки материалов в правильном порядке
   function processMaterialHierarchy(name, amount, depth = 0) {
     if (!materials.hasOwnProperty(name)) {
       return;
     }
     
-    // Для каждого составного материала сначала обрабатываем его компоненты
     const composition = materials[name];
     
     // Обрабатываем компоненты
@@ -433,7 +425,6 @@ function generateCraftingSteps(materialName, quantity) {
       }
     }
     
-    // Добавляем сам материал с его ингредиентами
     if (!addedMaterials.has(name)) {
       addedMaterials.set(name, amount);
       
@@ -449,16 +440,13 @@ function generateCraftingSteps(materialName, quantity) {
       
       steps.push(step);
     } else {
-      // Если материал уже был добавлен, обновляем его количество
       const currentAmount = addedMaterials.get(name);
       if (amount > currentAmount) {
-        // Находим его шаг и обновляем количество и ингредиенты
         const stepIndex = steps.findIndex(step => step.product === name);
         if (stepIndex !== -1) {
           const step = steps[stepIndex];
           step.quantity = amount;
           
-          // Обновляем также количество ингредиентов
           for (let ingredient in materials[name]) {
             step.ingredients[ingredient] = amount * materials[name][ingredient];
           }
@@ -468,7 +456,6 @@ function generateCraftingSteps(materialName, quantity) {
     }
   }
   
-  // Запускаем процесс для основного материала
   processMaterialHierarchy(materialName, quantity);
   
   return steps;
