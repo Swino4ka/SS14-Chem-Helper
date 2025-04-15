@@ -416,7 +416,6 @@ function generateCraftingSteps(materialName, quantity) {
     
     const composition = materials[name];
     
-    // Обрабатываем компоненты
     for (let ingredient in composition) {
       const ingredientAmount = amount * composition[ingredient];
       
@@ -504,10 +503,8 @@ function addMaterial() {
     return;
   }
   
-  // Сохраняем последнее введенное количество в localStorage
   localStorage.setItem('lastQuantity', quantity);
   
-  // Проверяем существование материала в словаре материалов с учетом регистра
   const materialName = Object.keys(materials).find(m => 
     m.toLowerCase() === materialInput.toLowerCase()
   );
@@ -520,7 +517,7 @@ function addMaterial() {
   }
   
   productionItems.push({
-    name: materialName, // Используем правильный регистр из словаря
+    name: materialName,
     quantity: quantity
   });
   
@@ -530,11 +527,9 @@ function addMaterial() {
   updateDetailedList();
   
   document.getElementById('material').value = '';
-  // Оставляем значение quantity, не очищаем его
-  document.getElementById('material').focus(); // Переводим фокус на поле материала
+  document.getElementById('material').focus();
 }
 
-// Функция переключения темы
 function toggleTheme() {
   const body = document.body;
   if (body.classList.contains('light-theme')) {
@@ -548,7 +543,6 @@ function toggleTheme() {
   }
 }
 
-// Инициализация темы при загрузке
 function initTheme() {
   const savedTheme = localStorage.getItem('theme') || 'dark';
   if (savedTheme === 'light') {
@@ -559,13 +553,11 @@ function initTheme() {
   }
 }
 
-// Инициализация и обработчики событий
 document.addEventListener('DOMContentLoaded', () => {
   initTheme();
   
   document.getElementById('themeToggle').addEventListener('click', toggleTheme);
   
-  // Восстанавливаем последнее введенное количество, если оно существует
   const lastQuantity = localStorage.getItem('lastQuantity');
   if (lastQuantity) {
     document.getElementById('quantity').value = lastQuantity;
@@ -598,7 +590,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
   
-  // Генерация частиц для фона
   generateParticles(80);
 });
 
