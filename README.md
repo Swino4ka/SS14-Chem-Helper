@@ -28,4 +28,4 @@ YouTube: https://www.youtube.com/@swino4ka
 LinkedIn: https://www.linkedin.com/in/oleksandr-kvartiuk-b24171265  
 
 ## Лицензия
-Этот проект распространяется на условиях лицензии MIT.
+Этот проект распространяется на условиях лицензии Custom Non-Commercial Open Source License (CNCOSL).
