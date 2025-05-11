@@ -94,15 +94,6 @@ input:focus, select:focus {
     box-shadow: 0 0 0 3px rgba(72, 118, 178, 0.2);
 }
   
-.formContainer {
-    background: #232836a1;
-    padding: 20px;
-    border-radius: 6px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-    border: 1px solid #2c3347;
-    margin-bottom: 20px;
-}
-  
 section {
     background: #232836a1;
     padding: 20px;
@@ -116,17 +107,6 @@ section h2 {
     font-size: 18px;
     margin-top: 0;
     border-bottom-color: #2c3347;
-}
-
-.form-group {
-    margin-bottom: 16px;
-}
-
-.form-group label {
-    display: block;
-    margin-bottom: 6px;
-    font-weight: 500;
-    color: #9eb8db;
 }
 
 footer {
@@ -182,6 +162,25 @@ ul#baseReagentsList li {
     align-items: center;
 }
 
+.form-group {
+  margin-bottom: 16px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 6px;
+  font-weight: 500;
+  color: #9eb8db;
+}
+  
+.formContainer {
+  background: #232836a1;
+  padding: 20px;
+  border-radius: 6px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  border: 1px solid #2c3347;
+  margin-bottom: 20px;
+}
 
 .empty-message {
     color: #626d85;
