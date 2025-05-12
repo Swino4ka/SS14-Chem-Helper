@@ -162,6 +162,26 @@ ul#baseReagentsList li {
     align-items: center;
 }
 
+#themeToggle {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: rgba(0,0,0,0.2);
+  border: none;
+  color: white;
+  font-size: 20px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+}
+
 .form-group {
   margin-bottom: 16px;
 }
@@ -346,26 +366,6 @@ ul#baseReagentsList li {
 
 .light-theme footer a:hover {
   color: #1a365d;
-}
-
-#themeToggle {
-  position: fixed;
-  top: 20px;
-  right: 20px;
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  background: rgba(0,0,0,0.2);
-  border: none;
-  color: white;
-  font-size: 20px;
-  cursor: pointer;
-  transition: background 0.3s ease;
-  z-index: 1000;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0;
 }
 
 .light-theme #themeToggle {
