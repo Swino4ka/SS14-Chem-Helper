@@ -12,19 +12,6 @@ body {
   position: relative;
 }
 
-.particle {
-  position: fixed;
-  bottom: -5px;
-  width: 4px;
-  height: 4px;
-  background: rgba(255,255,255,0.8);
-  opacity: 0.8;
-  border-radius: 50%;
-  animation: float linear infinite;
-  pointer-events: none;
-  z-index: -1;
-}
-
 h1, h2 {
     text-align: center;
     color: #9eb8db;
@@ -180,6 +167,19 @@ ul#baseReagentsList li {
   align-items: center;
   justify-content: center;
   padding: 0;
+}
+
+.particle {
+  position: fixed;
+  bottom: -5px;
+  width: 4px;
+  height: 4px;
+  background: rgba(255,255,255,0.8);
+  opacity: 0.8;
+  border-radius: 50%;
+  animation: float linear infinite;
+  pointer-events: none;
+  z-index: -1;
 }
 
 .form-group {
