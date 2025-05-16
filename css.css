@@ -344,6 +344,11 @@ ul#baseReagentsList li {
   color: #2c5282;
 }
 
+.light-theme #themeToggle {
+  background: rgba(0,0,0,0.1);
+  color: #333;
+}
+
 .light-theme ul#productionList li, 
 .light-theme ul#reagentsList li,
 .light-theme ul#baseReagentsList li,
@@ -366,11 +371,6 @@ ul#baseReagentsList li {
 
 .light-theme footer a:hover {
   color: #1a365d;
-}
-
-.light-theme #themeToggle {
-  background: rgba(0,0,0,0.1);
-  color: #333;
 }
 
 .fav-btn, .use-btn {
