@@ -103,7 +103,6 @@ const reactionTemps = {
 };
 
 const productionItems = [];
-
 const favoriteItems = JSON.parse(localStorage.getItem('favoriteItems')) || [];
 const materialsListElem = document.getElementById('materialsList');
 const productionListElem = document.getElementById('productionList');
