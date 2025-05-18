@@ -152,7 +152,7 @@ function updateProductionList() {
     favBtn.title = 'Добавить в избранное';
     favBtn.classList.add('fav-btn');
     favBtn.addEventListener('click', (e) => {
-      e.stopPropagation(); // Предотвращаем всплытие события
+      e.stopPropagation();
       addToFavorites(item.name, item.quantity);
     });
     
@@ -212,7 +212,7 @@ function updateFavoritesList() {
     useBtn.textContent = 'Использовать';
     useBtn.classList.add('use-btn');
     useBtn.addEventListener('click', (e) => {
-      e.stopPropagation(); // Предотвращаем всплытие события
+      e.stopPropagation(); 
       addItemToProduction(item.name, item.quantity);
     });
     
@@ -220,7 +220,7 @@ function updateFavoritesList() {
     deleteBtn.textContent = '✕';
     deleteBtn.classList.add('delete-btn');
     deleteBtn.addEventListener('click', (e) => {
-      e.stopPropagation(); // Предотвращаем всплытие события
+      e.stopPropagation();
       removeFromFavorites(index);
     });
     
