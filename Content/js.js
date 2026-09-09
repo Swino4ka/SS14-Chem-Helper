@@ -117,7 +117,9 @@ let reactionTemps = {
 };
 
 let translations = {};
+let uiTranslations = {};
 let craftingExceptions = new Set();
+let currentLanguage = localStorage.getItem('language') || 'ru';
 
 const reactionFiles = [
   'biological.yml', 'botany.yml', 'chemicals.yml', 'cleaning.yml',
@@ -127,6 +129,23 @@ const reactionFiles = [
 
 function displayName(materialName) {
   return translations[materialName] || materialName;
+}
+
+function t(key) {
+  return uiTranslations[key] || key;
+}
+
+function applyLanguage() {
+  document.documentElement.lang = currentLanguage === 'en' ? 'en' : 'ru';
+  document.querySelectorAll('[data-i18n]').forEach(element => {
+    element.textContent = t(element.dataset.i18n);
+  });
+  document.querySelectorAll('[data-i18n-placeholder]').forEach(element => {
+    element.placeholder = t(element.dataset.i18nPlaceholder);
+  });
+  document.getElementById('languageSelect').value = currentLanguage;
+  document.getElementById('languageSelect').setAttribute('aria-label', t('languageSelect'));
+  document.getElementById('themeToggle').title = t('themeToggle');
 }
 
 function parseYamlReactions(yaml) {
@@ -219,19 +238,28 @@ function parseYamlReactions(yaml) {
 }
 
 async function loadReactions() {
-  const [translationResponse, exceptionsResponse, ...reactionResponses] = await Promise.all([
-    fetch('Translations/ru_ru.json', { cache: 'no-store' }),
+  const [translationResponse, englishResponse, exceptionsResponse, ...reactionResponses] = await Promise.all([
+    fetch(`Translations/${currentLanguage === 'en' ? 'en_us' : 'ru_ru'}.json`, { cache: 'no-store' }),
+    fetch('Translations/en_us.json', { cache: 'no-store' }),
     fetch('Config/crafting_exceptions.json', { cache: 'no-store' }),
     ...reactionFiles.map(file => fetch(`Reactions/${file}`, { cache: 'no-store' }))
   ]);
 
-  const responses = [translationResponse, exceptionsResponse, ...reactionResponses];
+  const responses = [translationResponse, englishResponse, exceptionsResponse, ...reactionResponses];
   const failedResponse = responses.find(response => !response.ok);
   if (failedResponse) {
     throw new Error(`Failed to load ${failedResponse.url}: HTTP ${failedResponse.status}`);
   }
 
   translations = await translationResponse.json();
+  const englishTranslations = await englishResponse.json();
+  uiTranslations = translations._ui || englishTranslations._ui || {};
+  delete translations._ui;
+  delete englishTranslations._ui;
+  if (currentLanguage === 'en') {
+    translations = englishTranslations;
+  }
+  applyLanguage();
   craftingExceptions = new Set(await exceptionsResponse.json());
   materials = {};
   reactionTemps = {};
@@ -245,7 +273,7 @@ async function loadReactions() {
 
 function formatAmount(amount) {
   if (amount === 0) {
-    return 'катализатор';
+    return t('catalyst');
   }
 
   const roundedAmount = Number(amount.toFixed(2));
@@ -254,7 +282,7 @@ function formatAmount(amount) {
 
 function formatIngredientAmount(amount) {
   const formattedAmount = formatAmount(amount);
-  return formattedAmount === 'катализатор' ? formattedAmount : `${formattedAmount}u`;
+  return formattedAmount === t('catalyst') ? formattedAmount : `${formattedAmount}u`;
 }
 
 const productionItems = [];
@@ -287,8 +315,8 @@ function updateProductionList() {
   productionListElem.innerHTML = "";
   
   if (productionItems.length === 0) {
-    const emptyMessage = document.createElement('li');
-    emptyMessage.textContent = "Список пуст. Добавьте препараты для расчета.";
+     const emptyMessage = document.createElement('li');
+     emptyMessage.textContent = t('emptyProduction');
     emptyMessage.classList.add('empty-message');
     productionListElem.appendChild(emptyMessage);
     return;
@@ -348,8 +376,8 @@ function updateFavoritesList() {
   favoritesListElem.innerHTML = "";
   
   if (favoriteItems.length === 0) {
-    const emptyMessage = document.createElement('li');
-    emptyMessage.textContent = "Список избранного пуст. Добавьте часто используемые рецепты.";
+     const emptyMessage = document.createElement('li');
+     emptyMessage.textContent = t('emptyFavorites');
     emptyMessage.classList.add('empty-message');
     favoritesListElem.appendChild(emptyMessage);
     return;
@@ -366,7 +394,7 @@ function updateFavoritesList() {
     buttonsContainer.classList.add('fav-buttons');
     
     const useBtn = document.createElement('button');
-    useBtn.textContent = 'Использовать';
+    useBtn.textContent = t('favoriteUse');
     useBtn.classList.add('use-btn');
     useBtn.addEventListener('click', (e) => {
       e.stopPropagation(); 
@@ -422,8 +450,8 @@ function updateReagentsList() {
   reagentsListElem.innerHTML = "";
   
   if (Object.keys(reagentsTotal).length === 0) {
-    const emptyMessage = document.createElement('li');
-    emptyMessage.textContent = "Добавьте препараты для расчета необходимых реагентов.";
+     const emptyMessage = document.createElement('li');
+     emptyMessage.textContent = t('emptyReagents');
     emptyMessage.classList.add('empty-message');
     reagentsListElem.appendChild(emptyMessage);
     return;
@@ -480,8 +508,8 @@ function updateBaseReagentsList() {
   baseReagentsListElem.innerHTML = "";
 
   if (Object.keys(baseTotal).length === 0) {
-    const emptyMessage = document.createElement('li');
-    emptyMessage.textContent = "Добавьте препараты для расчета базовых реагентов.";
+     const emptyMessage = document.createElement('li');
+     emptyMessage.textContent = t('emptyBase');
     emptyMessage.classList.add('empty-message');
     baseReagentsListElem.appendChild(emptyMessage);
     return;
@@ -500,8 +528,8 @@ function updateDetailedList() {
   detailedListElem.innerHTML = "";
   
   if (productionItems.length === 0) {
-    const emptyMessage = document.createElement('p');
-    emptyMessage.textContent = "Добавьте препараты для отображения подробного состава.";
+     const emptyMessage = document.createElement('p');
+     emptyMessage.textContent = t('emptyDetails');
     emptyMessage.classList.add('empty-message');
     detailedListElem.appendChild(emptyMessage);
     return;
@@ -520,23 +548,23 @@ function updateDetailedList() {
 
     const treeKicker = document.createElement('span');
     treeKicker.classList.add('tree-kicker');
-    treeKicker.textContent = 'ДРЕВО КРАФТА';
+    treeKicker.textContent = t('treeKicker');
 
     const header = document.createElement('h3');
     header.textContent = displayName(item.name);
 
     const treeSummary = document.createElement('span');
     treeSummary.classList.add('tree-summary');
-    treeSummary.textContent = `${item.quantity}u · ${craftingSteps.length} этапов`;
+    treeSummary.textContent = `${item.quantity}u · ${craftingSteps.length} ${t('stages')}`;
 
     treeHeader.appendChild(treeKicker);
     treeHeader.appendChild(header);
     treeHeader.appendChild(treeSummary);
     tree.appendChild(treeHeader);
-    
+
     const stepsContainer = document.createElement('div');
     stepsContainer.classList.add('crafting-steps', 'tree-branches');
-    
+
     craftingSteps.forEach((step, index) => {
       const stepElement = document.createElement('div');
       stepElement.classList.add('crafting-step');
@@ -674,14 +702,14 @@ function addMaterial() {
   if (!materialInput) {
     const input = document.getElementById('material');
     highlightError(input);
-    showNotification('Введите название материала');
+      showNotification(t('inputMaterial'));
     return;
   }
   
   if (isNaN(quantity) || quantity <= 0) {
     const input = document.getElementById('quantity');
     highlightError(input);
-    showNotification('Введите корректное количество');
+      showNotification(t('inputQuantity'));
     return;
   }
   
@@ -695,7 +723,7 @@ function addMaterial() {
   if (!materialName) {
     const input = document.getElementById('material');
     highlightError(input);
-    showNotification('Материал не найден');
+      showNotification(t('materialNotFound'));
     return;
   }
   
@@ -738,6 +766,23 @@ function initTheme() {
 
 document.addEventListener('DOMContentLoaded', () => {
   initTheme();
+
+  document.getElementById('languageSelect').value = currentLanguage;
+  document.getElementById('languageSelect').addEventListener('change', async (event) => {
+    currentLanguage = event.target.value;
+    localStorage.setItem('language', currentLanguage);
+    try {
+      await loadReactions();
+      populateMaterialsList();
+      updateProductionList();
+      updateReagentsList();
+      updateBaseReagentsList();
+      updateDetailedList();
+      updateFavoritesList();
+    } catch (error) {
+      console.error('ChemHelper language loading failed:', error);
+    }
+  });
   
   document.getElementById('themeToggle').addEventListener('click', toggleTheme);
   
@@ -755,9 +800,10 @@ document.addEventListener('DOMContentLoaded', () => {
     updateReagentsList();
     updateBaseReagentsList();
     updateDetailedList();
+    updateFavoritesList();
   }).catch((error) => {
     console.error('ChemHelper data loading failed:', error);
-    showNotification('Не удалось загрузить YAML. Запустите: python -m http.server 8000');
+      showNotification(t('loadError'));
   });
   
   document.getElementById('addBtn').addEventListener('click', addMaterial);

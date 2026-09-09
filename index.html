@@ -11,52 +11,61 @@
   <link href="https://fonts.googleapis.com/css2?family=Geologica:wght@100..900&display=swap" rel="stylesheet">
 </head>
 <body>
-  <button id="themeToggle" title="Переключить тему">🌑</button>
+  <div class="utility-controls">
+    <label class="language-picker" for="languageSelect">
+      <span class="sr-only" data-i18n="languageSelect">Язык</span>
+      <select id="languageSelect" aria-label="Выбор языка">
+        <option value="ru">RU</option>
+        <option value="en">EN</option>
+      </select>
+    </label>
+    <button id="themeToggle" title="Переключить тему">🌑</button>
+  </div>
 
   <h1>ChemHelper</h1>
   
   <div class="formContainer">
     <div class="form-group">
-      <label for="quantity">Количество препарата (юниты):</label>
-      <input type="number" id="quantity" min="1" placeholder="Введите количество">
+      <label for="quantity" data-i18n="quantityLabel">Количество препарата (юниты):</label>
+      <input type="number" id="quantity" min="1" data-i18n-placeholder="quantityPlaceholder" placeholder="Введите количество">
     </div>
 
     <div class="form-group">
-      <label for="material">Название препарата:</label>
-      <input type="text" id="material" list="materialsList" placeholder="Начните вводить название препарата...">
+      <label for="material" data-i18n="materialLabel">Название препарата:</label>
+      <input type="text" id="material" list="materialsList" data-i18n-placeholder="materialPlaceholder" placeholder="Начните вводить название препарата...">
       <datalist id="materialsList"></datalist>
     </div>
 
-    <button id="addBtn">Добавить препарат</button>
+    <button id="addBtn" data-i18n="addButton">Добавить препарат</button>
   </div>
 
   <section>
-    <h2>Список препаратов</h2>
+    <h2 data-i18n="productionTitle">Список препаратов</h2>
     <ul id="productionList"></ul>
   </section>
 
   <section class="favorites-section">
-    <h2>Избранные рецепты</h2>
+    <h2 data-i18n="favoritesTitle">Избранные рецепты</h2>
     <ul id="favoritesList"></ul>
   </section>
 
   <section>
-    <h2>Подробный состав</h2>
+    <h2 data-i18n="detailsTitle">Подробный состав</h2>
     <div id="detailedList"></div>
   </section>
 
   <section>
-    <h2>Необходимые реагенты</h2>
+    <h2 data-i18n="reagentsTitle">Необходимые реагенты</h2>
     <ul id="reagentsList"></ul>
   </section>
 
   <section>
-    <h2>Базовые материалы</h2>
+    <h2 data-i18n="baseTitle">Базовые материалы</h2>
     <ul id="baseReagentsList"></ul>
   </section>
 
   <footer>
-    <p>✨ Автор: Swino4ka ✨</p>
+    <p data-i18n="author">✨ Автор: Swino4ka ✨</p>
     <div class="links">
       <a href="https://discord.com/users/472393576010088449" target="_blank">Discord</a>
       <a href="https://t.me/Swino4ka" target="_blank">Telegram</a>
