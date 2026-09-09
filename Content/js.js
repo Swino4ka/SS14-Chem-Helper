@@ -1,5 +1,5 @@
-const materials = {
-
+/* Legacy materials table. Recipes are loaded from Reactions/*.yml.
+let materials = {
   "Алоксадон": { "Алое": 0.2, "Криоксадон": 0.4, "Лепоразин": 0.4 },
   "Амбузол": { "Аммиак": 0.25, "Диловен": 0.25, "Кровь Зомби": 0.5 },
   "Амбузол Плюс": { "Амбузол": 0.5, "Омнизин": 0.5 },
@@ -85,18 +85,16 @@ const materials = {
   "Этилоксиэфедрин": { "Дезоксиэфедрин": 0.5, "Стеллибинин": 0.5 },
   "Этилредоксразин": { "Диловен": 0.33333, "Кислород": 0.33333, "Углерод": 0.33333 },
   "Эфедрин": { "Масло": 0.25, "Водород": 0.25, "Сахар": 0.25, "Диэтиламин": 0.25 },
-
   "Warfarin": { "Серная Кислота": 0.33333, "Натрий": 0.33333, "Азот": 0.33333 },
   "Варфарин": { "Серная Кислота": 0.33333, "Натрий": 0.33333, "Азот": 0.33333 },
-
   "Hemorrhinol": { "Бритвиум": 1, "Warfarin": 1, "Плазма": 0.5 },
   "Геморргинол": { "Бритвиум": 1, "Варфарин": 1, "Плазма": 0.5 },
-
   "Arcryox": { "Литий": 0.33333, "Трикордразин": 0.33333, "Криоксадон": 0.33333 },
   "Аркриокс": { "Литий": 0.33333, "Трикордразин": 0.33333, "Криоксадон": 0.33333 }
-};
+}; */
+let materials = {};
 
-const reactionTemps = {
+let reactionTemps = {
   "Сигинат": 370,
   "Инсузин": 433,
   "Пиразин": 540,
@@ -118,6 +116,147 @@ const reactionTemps = {
   "Гидроксид": 310
 };
 
+let translations = {};
+let craftingExceptions = new Set();
+
+const reactionFiles = [
+  'biological.yml', 'botany.yml', 'chemicals.yml', 'cleaning.yml',
+  'drinks.yml', 'food.yml', 'fun.yml', 'gas.yml', 'medicine.yml',
+  'pyrotechnic.yml', 'single_reagent.yml', 'corvaxDrinks.yml'
+];
+
+function displayName(materialName) {
+  return translations[materialName] || materialName;
+}
+
+function parseYamlReactions(yaml) {
+  const parsedMaterials = {};
+  const parsedTemps = {};
+  let reaction = null;
+  let section = null;
+  let currentIngredient = null;
+
+  function commitReaction() {
+    if (!reaction || !reaction.id || Object.keys(reaction.products).length === 0) {
+      return;
+    }
+
+    for (const [product, productAmount] of Object.entries(reaction.products)) {
+      if (parsedMaterials[product]) {
+        continue;
+      }
+      parsedMaterials[product] = {};
+      for (const [ingredient, details] of Object.entries(reaction.reactants)) {
+        parsedMaterials[product][ingredient] = details.catalyst ? 0 : details.amount / productAmount;
+      }
+    }
+    if (reaction.minTemp) {
+      parsedTemps[reaction.id] = reaction.minTemp;
+    }
+  }
+
+  for (const rawLine of yaml.split(/\r?\n/)) {
+    const line = rawLine.replace(/\s+#.*$/, '');
+    const trimmed = line.trim();
+    const indent = line.length - line.trimStart().length;
+
+    if (trimmed === '- type: reaction') {
+      commitReaction();
+      reaction = { id: null, reactants: {}, products: {}, minTemp: null };
+      section = null;
+      currentIngredient = null;
+      continue;
+    }
+
+    if (!reaction || !trimmed || trimmed.startsWith('#')) {
+      continue;
+    }
+
+    const idMatch = trimmed.match(/^id:\s*([A-Za-z0-9_]+)/);
+    if (idMatch && indent === 2) {
+      reaction.id = idMatch[1];
+      continue;
+    }
+
+    const temperatureMatch = trimmed.match(/^minTemp:\s*(-?\d+(?:\.\d+)?)$/);
+    if (temperatureMatch && indent === 2) {
+      reaction.minTemp = Number(temperatureMatch[1]);
+      continue;
+    }
+
+    if (trimmed === 'reactants:' || trimmed === 'products:') {
+      section = trimmed.slice(0, -1);
+      currentIngredient = null;
+      continue;
+    }
+
+    const namedValue = trimmed.match(/^([A-Za-z0-9_]+):(?:\s*(-?\d+(?:\.\d+)?))?$/);
+    if (namedValue && indent === 4 && section) {
+      currentIngredient = namedValue[1];
+      if (section === 'products' && namedValue[2] !== undefined) {
+        reaction.products[currentIngredient] = Number(namedValue[2]);
+      }
+      continue;
+    }
+
+    const amountMatch = trimmed.match(/^amount:\s*(-?\d+(?:\.\d+)?)$/);
+    if (amountMatch && indent === 6 && section === 'reactants' && currentIngredient) {
+      reaction.reactants[currentIngredient] = {
+        amount: Number(amountMatch[1]),
+        catalyst: false
+      };
+      continue;
+    }
+
+    if (trimmed === 'catalyst: true' && indent === 6 && section === 'reactants' && currentIngredient) {
+      reaction.reactants[currentIngredient].catalyst = true;
+    }
+  }
+
+  commitReaction();
+
+  return { materials: parsedMaterials, reactionTemps: parsedTemps };
+}
+
+async function loadReactions() {
+  const [translationResponse, exceptionsResponse, ...reactionResponses] = await Promise.all([
+    fetch('Translations/ru_ru.json', { cache: 'no-store' }),
+    fetch('Config/crafting_exceptions.json', { cache: 'no-store' }),
+    ...reactionFiles.map(file => fetch(`Reactions/${file}`, { cache: 'no-store' }))
+  ]);
+
+  const responses = [translationResponse, exceptionsResponse, ...reactionResponses];
+  const failedResponse = responses.find(response => !response.ok);
+  if (failedResponse) {
+    throw new Error(`Failed to load ${failedResponse.url}: HTTP ${failedResponse.status}`);
+  }
+
+  translations = await translationResponse.json();
+  craftingExceptions = new Set(await exceptionsResponse.json());
+  materials = {};
+  reactionTemps = {};
+
+  for (const response of reactionResponses) {
+    const parsed = parseYamlReactions(await response.text());
+    Object.assign(materials, parsed.materials);
+    Object.assign(reactionTemps, parsed.reactionTemps);
+  }
+}
+
+function formatAmount(amount) {
+  if (amount === 0) {
+    return 'катализатор';
+  }
+
+  const roundedAmount = Number(amount.toFixed(2));
+  return roundedAmount === 0 ? '<0.01' : roundedAmount;
+}
+
+function formatIngredientAmount(amount) {
+  const formattedAmount = formatAmount(amount);
+  return formattedAmount === 'катализатор' ? formattedAmount : `${formattedAmount}u`;
+}
+
 const productionItems = [];
 const favoriteItems = JSON.parse(localStorage.getItem('favoriteItems')) || [];
 const materialsListElem = document.getElementById('materialsList');
@@ -129,11 +268,13 @@ const favoritesListElem = document.getElementById('favoritesList');
 
 function populateMaterialsList() {
   materialsListElem.innerHTML = '';
-  const sortedMaterials = Object.keys(materials).sort();
+  const sortedMaterials = Object.keys(materials).sort((left, right) =>
+    displayName(left).localeCompare(displayName(right), 'ru')
+  );
   
   for (let material of sortedMaterials) {
     const option = document.createElement('option');
-    option.value = material;
+    option.value = displayName(material);
     materialsListElem.appendChild(option);
   }
 }
@@ -157,7 +298,7 @@ function updateProductionList() {
     const li = document.createElement('li');
     
     const itemText = document.createElement('span');
-    itemText.textContent = `${item.quantity} u ${item.name}`;
+    itemText.textContent = `${item.quantity} u ${displayName(item.name)}`;
     li.appendChild(itemText);
     
     const buttonsContainer = document.createElement('div');
@@ -218,7 +359,7 @@ function updateFavoritesList() {
     const li = document.createElement('li');
     
     const itemText = document.createElement('span');
-    itemText.textContent = `${item.quantity} u ${item.name}`;
+    itemText.textContent = `${item.quantity} u ${displayName(item.name)}`;
     li.appendChild(itemText);
     
     const buttonsContainer = document.createElement('div');
@@ -273,7 +414,7 @@ function updateReagentsList() {
   productionItems.forEach(item => {
     const composition = materials[item.name];
     for (let reagent in composition) {
-      const amount = Math.round(item.quantity * composition[reagent]);
+      const amount = item.quantity * composition[reagent];
       reagentsTotal[reagent] = (reagentsTotal[reagent] || 0) + amount;
     }
   });
@@ -292,23 +433,25 @@ function updateReagentsList() {
   
   for (let reagent of sortedReagents) {
     const li = document.createElement('li');
-    li.textContent = `${reagentsTotal[reagent]} u ${reagent}`;
+    li.textContent = `${formatIngredientAmount(reagentsTotal[reagent])} ${displayName(reagent)}`;
     reagentsListElem.appendChild(li);
   }
 }
 
-function getBaseReagents(materialName, quantity) {
-  if (!materials.hasOwnProperty(materialName)) {
+function getBaseReagents(materialName, quantity, visited = new Set()) {
+  if (!materials.hasOwnProperty(materialName) || craftingExceptions.has(materialName) || visited.has(materialName)) {
     return { [materialName]: quantity };
   }
   
   const composition = materials[materialName];
+  const nextVisited = new Set(visited);
+  nextVisited.add(materialName);
   let result = {};
   
   for (let reagent in composition) {
     const reagentQuantity = quantity * composition[reagent];
     if (materials.hasOwnProperty(reagent)) {
-      const subReagents = getBaseReagents(reagent, reagentQuantity);
+      const subReagents = getBaseReagents(reagent, reagentQuantity, nextVisited);
       for (let sub in subReagents) {
         result[sub] = (result[sub] || 0) + subReagents[sub];
       }
@@ -326,13 +469,16 @@ function updateBaseReagentsList() {
   productionItems.forEach(item => {
     const baseForItem = getBaseReagents(item.name, item.quantity);
     for (let reagent in baseForItem) {
-      const amount = Math.round(baseForItem[reagent]);
+      const amount = baseForItem[reagent];
+      if (amount === 0) {
+        continue;
+      }
       baseTotal[reagent] = (baseTotal[reagent] || 0) + amount;
     }
   });
   
   baseReagentsListElem.innerHTML = "";
-  
+
   if (Object.keys(baseTotal).length === 0) {
     const emptyMessage = document.createElement('li');
     emptyMessage.textContent = "Добавьте препараты для расчета базовых реагентов.";
@@ -345,7 +491,7 @@ function updateBaseReagentsList() {
   
   for (let reagent of sortedBaseReagents) {
     const li = document.createElement('li');
-    li.textContent = `${baseTotal[reagent]} u ${reagent}`;
+    li.textContent = `${formatIngredientAmount(baseTotal[reagent])} ${displayName(reagent)}`;
     baseReagentsListElem.appendChild(li);
   }
 }
@@ -364,18 +510,39 @@ function updateDetailedList() {
   const reversedItems = [...productionItems].reverse();
   
   reversedItems.forEach(item => {
-    const header = document.createElement('h3');
-    header.textContent = `Пошаговый гайд: ${item.name}`; 
-    detailedListElem.appendChild(header);
-    
     const craftingSteps = generateCraftingSteps(item.name, item.quantity);
+
+    const tree = document.createElement('div');
+    tree.classList.add('crafting-tree');
+
+    const treeHeader = document.createElement('div');
+    treeHeader.classList.add('tree-header');
+
+    const treeKicker = document.createElement('span');
+    treeKicker.classList.add('tree-kicker');
+    treeKicker.textContent = 'ДРЕВО КРАФТА';
+
+    const header = document.createElement('h3');
+    header.textContent = displayName(item.name);
+
+    const treeSummary = document.createElement('span');
+    treeSummary.classList.add('tree-summary');
+    treeSummary.textContent = `${item.quantity}u · ${craftingSteps.length} этапов`;
+
+    treeHeader.appendChild(treeKicker);
+    treeHeader.appendChild(header);
+    treeHeader.appendChild(treeSummary);
+    tree.appendChild(treeHeader);
     
     const stepsContainer = document.createElement('div');
-    stepsContainer.classList.add('crafting-steps');
+    stepsContainer.classList.add('crafting-steps', 'tree-branches');
     
     craftingSteps.forEach((step, index) => {
       const stepElement = document.createElement('div');
       stepElement.classList.add('crafting-step');
+      if (index === craftingSteps.length - 1) {
+        stepElement.classList.add('is-target');
+      }
       
       const stepNumber = document.createElement('div');
       stepNumber.classList.add('step-number');
@@ -388,9 +555,9 @@ function updateDetailedList() {
       stepTitle.classList.add('step-title');
       
       if (reactionTemps[step.product]) {
-        stepTitle.innerHTML = `${step.product} ${Math.round(step.quantity)}u <span class="temp-req">🔥 ${reactionTemps[step.product]}K</span>`;
+        stepTitle.innerHTML = `${displayName(step.product)} ${formatIngredientAmount(step.quantity)} <span class="temp-req">🔥 ${reactionTemps[step.product]}K</span>`;
       } else {
-        stepTitle.textContent = `${step.product} ${Math.round(step.quantity)}u`;
+        stepTitle.textContent = `${displayName(step.product)} ${formatIngredientAmount(step.quantity)}`;
       }
       
       stepContent.appendChild(stepTitle);
@@ -403,7 +570,7 @@ function updateDetailedList() {
         
         for (let ingredient of sortedIngredients) {
           const ingredientItem = document.createElement('li');
-          ingredientItem.textContent = `${ingredient} ${Math.round(step.ingredients[ingredient])}u`;
+          ingredientItem.textContent = `${displayName(ingredient)} ${formatIngredientAmount(step.ingredients[ingredient])}`;
           ingredientsList.appendChild(ingredientItem);
         }
         
@@ -415,7 +582,8 @@ function updateDetailedList() {
       stepsContainer.appendChild(stepElement);
     });
     
-    detailedListElem.appendChild(stepsContainer);
+    tree.appendChild(stepsContainer);
+    detailedListElem.appendChild(tree);
   });
 }
 
@@ -433,7 +601,7 @@ function generateCraftingSteps(materialName, quantity) {
     for (let ingredient in composition) {
       const ingredientAmount = amount * composition[ingredient];
       
-      if (materials.hasOwnProperty(ingredient)) {
+      if (materials.hasOwnProperty(ingredient) && !craftingExceptions.has(ingredient)) {
         processMaterialHierarchy(ingredient, ingredientAmount, depth + 1);
       }
     }
@@ -519,8 +687,9 @@ function addMaterial() {
   
   localStorage.setItem('lastQuantity', quantity);
   
-  const materialName = Object.keys(materials).find(m => 
-    m.toLowerCase() === materialInput.toLowerCase()
+  const materialName = Object.keys(materials).find(m =>
+    m.toLowerCase() === materialInput.toLowerCase() ||
+    displayName(m).toLowerCase() === materialInput.toLowerCase()
   );
   
   if (!materialName) {
@@ -577,12 +746,19 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('quantity').value = lastQuantity;
   }
   
-  populateMaterialsList();
   updateProductionList();
-  updateReagentsList();
-  updateBaseReagentsList();
-  updateDetailedList();
   updateFavoritesList();
+
+  loadReactions().then(() => {
+    populateMaterialsList();
+    updateProductionList();
+    updateReagentsList();
+    updateBaseReagentsList();
+    updateDetailedList();
+  }).catch((error) => {
+    console.error('ChemHelper data loading failed:', error);
+    showNotification('Не удалось загрузить YAML. Запустите: python -m http.server 8000');
+  });
   
   document.getElementById('addBtn').addEventListener('click', addMaterial);
   
