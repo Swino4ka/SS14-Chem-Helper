@@ -119,7 +119,7 @@ let reactionTemps = {
 let translations = {};
 let uiTranslations = {};
 let craftingExceptions = new Set();
-let currentLanguage = localStorage.getItem('language') || 'ru';
+let currentLanguage = localStorage.getItem('language') || 'en';
 
 const reactionFiles = [
   'biological.yml', 'botany.yml', 'chemicals.yml', 'cleaning.yml',
