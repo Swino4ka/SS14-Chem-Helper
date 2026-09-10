@@ -1,3 +1,4 @@
+# EN
 # ChemHelper
 
 ChemHelper is a web application that helps calculate the required amounts of reagents for creating chemical substances in the game Space Station 14.
@@ -40,6 +41,7 @@ This project is distributed under the terms of the **Custom Non-Commercial Open 
 
 ______________________________________________
 
+# RU
 # ChemHelper
 ChemHelper - это веб-приложение, которое помогает рассчитывать количество необходимых реагентов для создания химических препаратов в игре Space Station 14.
 Приложение доступно по следующей ссылке: https://swino4ka.github.io/SS14-Chem-Helper/
