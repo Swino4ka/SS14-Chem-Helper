@@ -28,12 +28,11 @@ The language can be switched using the `RU / EN` dropdown next to the theme butt
 
 ## Creator: Swino4ka
 
-Discord: https://discord.com/users/472393576010088449
-Telegram: https://t.me/Swino4ka
-Gmail: [rybalalka@gmail.com](mailto:rybalalka@gmail.com)
-Steam: https://steamcommunity.com/profiles/76561198806638670/
-YouTube: https://www.youtube.com/@swino4ka
-LinkedIn: https://www.linkedin.com/in/oleksandr-kvartiuk-b24171265/
+- Discord: https://discord.com/users/472393576010088449
+- Telegram: https://t.me/Swino4ka
+- Steam: https://steamcommunity.com/profiles/76561198806638670/
+- YouTube: https://www.youtube.com/@swino4ka
+- LinkedIn: https://www.linkedin.com/in/oleksandr-kvartiuk-b24171265/
 
 ## License
 
@@ -67,7 +66,6 @@ ChemHelper - это веб-приложение, которое помогает
 ## Создатель: Swino4ka
 Discord: https://discord.com/users/472393576010088449  
 Telegram: https://t.me/Swino4ka  
-Gmail: rybalalka@gmail.com  
 Steam: https://steamcommunity.com/profiles/76561198806638670/  
 YouTube: https://www.youtube.com/@swino4ka  
 LinkedIn: https://www.linkedin.com/in/oleksandr-kvartiuk-b24171265  
