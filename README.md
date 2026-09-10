@@ -26,12 +26,6 @@ The language can be switched using the `RU / EN` dropdown next to the theme butt
 3. Click the **"Add Material"** button to include it in the calculation.
 4. The final list of calculated reagents will be displayed in the **"Required Reagents"** section.
 
-## Crafting Tree Exceptions
-
-The list of components whose recipes should not be expanded is located in `Config/crafting_exceptions.json`.
-
-Add a reagent ID there, for example `"Water"`, to keep it as part of the recipe while preventing its crafting recipe from being displayed in the tree.
-
 ## Creator: Swino4ka
 
 Discord: https://discord.com/users/472393576010088449
@@ -69,10 +63,6 @@ ChemHelper - это веб-приложение, которое помогает
 2. Выберите необходимый материал из выпадающего списка.
 3. Нажмите кнопку "Добавить материал", чтобы включить его в расчет.
 4. В разделе "Необходимые реагенты" отобразится итоговый список с рассчитанными данными.
-
-## Исключения для дерева крафта
-Список компонентов, для которых не нужно раскрывать отдельный рецепт, находится в `Config/crafting_exceptions.json`.
-Добавьте туда ID реагента, например `"Water"`, чтобы оставить его в составе, но не показывать его крафт в дереве.
 
 ## Создатель: Swino4ka
 Discord: https://discord.com/users/472393576010088449  
