@@ -257,12 +257,14 @@ export function updateDetailedList() {
 function generateCraftingSteps(materialName, quantity) {
   const steps = [];
   const addedMaterials = new Map();
-  function processMaterialHierarchy(name, amount) {
-    if (!isMaterialValid(name)) return;
+  function processMaterialHierarchy(name, amount, visited = new Set()) {
+    if (!isMaterialValid(name) || visited.has(name)) return;
+    const nextVisited = new Set(visited);
+    nextVisited.add(name);
     for (const ingredient in state.materials[name]) {
       const ingredientAmount = amount * state.materials[name][ingredient];
       if (isMaterialValid(ingredient) && !state.craftingExceptions.has(ingredient)) {
-        processMaterialHierarchy(ingredient, ingredientAmount);
+        processMaterialHierarchy(ingredient, ingredientAmount, nextVisited);
       }
     }
     if (!addedMaterials.has(name)) {
