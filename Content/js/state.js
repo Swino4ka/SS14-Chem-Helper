@@ -1,5 +1,6 @@
 export const state = {
   materials: {},
+  materialCategories: {},
   reactionTemps: {},
   translations: {},
   uiTranslations: {},

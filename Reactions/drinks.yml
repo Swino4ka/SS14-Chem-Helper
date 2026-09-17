@@ -1,3 +1,4 @@
+# Default category: Wizden
 # SPDX-FileCopyrightText: 2020 AJCM-git <60196617+AJCM-git@users.noreply.github.com>
 # SPDX-FileCopyrightText: 2020 Injazz <injazza@gmail.com>
 # SPDX-FileCopyrightText: 2020 nuke <47336974+nuke-makes-games@users.noreply.github.com>
@@ -889,22 +890,6 @@
       amount: 1
   products:
     Mead: 2
-
-- type: reaction
-  id: Mojito
-  requiredMixerCategories:
-  - Shake
-  reactants:
-    JuiceLime:
-      amount: 1
-    Rum:
-      amount: 1
-    SodaWater:
-      amount: 1
-    Sugar:
-      amount: 1
-  products:
-    Mojito: 4
 
 - type: reaction
   id: MonkeyBusiness

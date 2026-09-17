@@ -1,5 +1,5 @@
 import { state } from './state.js';
-import { displayName, t } from './i18n.js';
+import { appendMaterialLabel, displayLabel, t } from './i18n.js';
 import {
   materialsListElem, productionListElem, reagentsListElem,
   baseReagentsListElem, detailedListElem, favoritesListElem
@@ -19,11 +19,11 @@ export function formatIngredientAmount(amount) {
 export function populateMaterialsList() {
   materialsListElem.innerHTML = '';
   const sortedMaterials = Object.keys(state.materials).sort((left, right) =>
-    displayName(left).localeCompare(displayName(right), 'ru')
+    displayLabel(left).localeCompare(displayLabel(right), 'ru')
   );
   for (const material of sortedMaterials) {
     const option = document.createElement('option');
-    option.value = displayName(material);
+    option.value = displayLabel(material);
     materialsListElem.appendChild(option);
   }
 }
@@ -44,7 +44,8 @@ export function updateProductionList() {
   [...state.productionItems].reverse().forEach((item, index) => {
     const li = document.createElement('li');
     const itemText = document.createElement('span');
-    itemText.textContent = `${item.quantity} u ${displayName(item.name)}`;
+    itemText.append(`${item.quantity} u `);
+    appendMaterialLabel(itemText, item.name);
     li.appendChild(itemText);
     const buttonsContainer = document.createElement('div');
     buttonsContainer.classList.add('item-buttons');
@@ -96,7 +97,8 @@ export function updateFavoritesList() {
   state.favoriteItems.forEach((item, index) => {
     const li = document.createElement('li');
     const itemText = document.createElement('span');
-    itemText.textContent = `${item.quantity} u ${displayName(item.name)}`;
+    itemText.append(`${item.quantity} u `);
+    appendMaterialLabel(itemText, item.name);
     const buttonsContainer = document.createElement('div');
     buttonsContainer.classList.add('fav-buttons');
     const useBtn = document.createElement('button');
@@ -188,7 +190,8 @@ function renderReagentList(element, totals, emptyKey) {
   }
   Object.keys(totals).sort().forEach(reagent => {
     const li = document.createElement('li');
-    li.textContent = `${formatIngredientAmount(totals[reagent])} ${displayName(reagent)}`;
+    li.append(`${formatIngredientAmount(totals[reagent])} `);
+    appendMaterialLabel(li, reagent);
     element.appendChild(li);
   });
 }
@@ -211,7 +214,7 @@ export function updateDetailedList() {
     treeKicker.classList.add('tree-kicker');
     treeKicker.textContent = t('treeKicker');
     const header = document.createElement('h3');
-    header.textContent = displayName(item.name);
+    appendMaterialLabel(header, item.name);
     const steps = generateCraftingSteps(item.name, item.quantity);
     const summary = document.createElement('span');
     summary.classList.add('tree-summary');
@@ -231,7 +234,8 @@ export function updateDetailedList() {
       stepContent.classList.add('step-content');
       const stepTitle = document.createElement('div');
       stepTitle.classList.add('step-title');
-      stepTitle.textContent = `${displayName(step.product)} ${formatIngredientAmount(step.quantity)}`;
+      appendMaterialLabel(stepTitle, step.product);
+      stepTitle.append(` ${formatIngredientAmount(step.quantity)}`);
       if (state.reactionTemps[step.product]) {
         stepTitle.innerHTML += ` <span class="temp-req">🔥 ${state.reactionTemps[step.product]}K</span>`;
       }
@@ -241,7 +245,8 @@ export function updateDetailedList() {
         ingredientsList.classList.add('step-ingredients');
         Object.keys(step.ingredients).sort().forEach(ingredient => {
           const ingredientItem = document.createElement('li');
-          ingredientItem.textContent = `${displayName(ingredient)} ${formatIngredientAmount(step.ingredients[ingredient])}`;
+          appendMaterialLabel(ingredientItem, ingredient);
+          ingredientItem.append(` ${formatIngredientAmount(step.ingredients[ingredient])}`);
           ingredientsList.appendChild(ingredientItem);
         });
         stepContent.appendChild(ingredientsList);
