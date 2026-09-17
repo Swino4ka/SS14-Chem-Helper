@@ -1,5 +1,5 @@
 import { state } from './state.js';
-import { t, applyLanguage } from './i18n.js';
+import { displayLabel, displayName, t, applyLanguage } from './i18n.js';
 import { loadReactions } from './data.js';
 import {
   addItemToProduction, populateMaterialsList, updateProductionList,
@@ -42,7 +42,8 @@ export function addMaterial() {
   localStorage.setItem('lastQuantity', quantity);
   const materialName = Object.keys(state.materials).find(name =>
     name.toLowerCase() === materialInput.toLowerCase() ||
-    (state.translations[name] || name).toLowerCase() === materialInput.toLowerCase()
+    displayName(name).toLowerCase() === materialInput.toLowerCase() ||
+    displayLabel(name).toLowerCase() === materialInput.toLowerCase()
   );
   if (!materialName || !isMaterialValid(materialName)) {
     const input = document.getElementById('material');

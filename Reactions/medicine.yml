@@ -1,3 +1,4 @@
+# Default category: Wizden
 # SPDX-FileCopyrightText: 2019 moneyl <8206401+Moneyl@users.noreply.github.com>
 # SPDX-FileCopyrightText: 2020 AJCM-git <60196617+AJCM-git@users.noreply.github.com>
 # SPDX-FileCopyrightText: 2021 Elijahrane <60792108+Elijahrane@users.noreply.github.com>
@@ -1150,3 +1151,44 @@
       amount: 1
   products:
     Devirate: 2
+    
+# ============== WIZDEN MED ==============
+# ============== WIZDEN MED ==============
+# ============== WIZDEN MED ==============
+
+- type: reaction
+  id: Arcryox
+  minTemp: 370
+  reactants:
+    Lithium:
+      amount: 1
+    Tricordrazine:
+      amount: 1
+    Cryoxadone:
+      amount: 1
+  products:
+    Arcryox: 3
+
+- type: reaction
+  id: Heparin
+  reactants:
+    SulfuricAcid:
+      amount: 1
+    Nitrogen:
+      amount: 1
+    Sodium:
+      amount: 1
+  products:
+    Heparin: 2
+
+- type: reaction
+  id: Hemorrhinol
+  reactants:
+    Heparin:
+      amount: 2
+    Razorium:
+      amount: 2
+    Plasma:
+      amount: 1
+  products:
+    Hemorrhinol: 2

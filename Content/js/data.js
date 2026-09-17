@@ -3,7 +3,9 @@ import { applyLanguage } from './i18n.js';
 
 export function parseYamlReactions(yaml) {
   const parsedMaterials = {};
+  const parsedCategories = {};
   const parsedTemps = {};
+  let defaultCategory = 'Wizden';
   let reaction = null;
   let section = null;
   let currentIngredient = null;
@@ -14,6 +16,7 @@ export function parseYamlReactions(yaml) {
     for (const [product, productAmount] of Object.entries(reaction.products)) {
       if (parsedMaterials[product]) continue;
       parsedMaterials[product] = {};
+      parsedCategories[product] = reaction.category || defaultCategory;
       for (const [ingredient, details] of Object.entries(reaction.reactants)) {
         parsedMaterials[product][ingredient] = details.catalyst ? 0 : details.amount / productAmount;
       }
@@ -22,13 +25,18 @@ export function parseYamlReactions(yaml) {
   }
 
   for (const rawLine of yaml.split(/\r?\n/)) {
+    const categoryComment = rawLine.trim().match(/^#\s*Default category:\s*([A-Za-z0-9_-]+)/i);
+    if (categoryComment) {
+      defaultCategory = categoryComment[1];
+      continue;
+    }
     const line = rawLine.replace(/\s+#.*$/, '');
     const trimmed = line.trim();
     const indent = line.length - line.trimStart().length;
 
     if (trimmed === '- type: reaction') {
       commitReaction();
-      reaction = { id: null, reactants: {}, products: {}, minTemp: null };
+      reaction = { id: null, category: null, reactants: {}, products: {}, minTemp: null };
       section = null;
       currentIngredient = null;
       continue;
@@ -38,6 +46,11 @@ export function parseYamlReactions(yaml) {
     const idMatch = trimmed.match(/^id:\s*([A-Za-z0-9_]+)/);
     if (idMatch && indent === 2) {
       reaction.id = idMatch[1];
+      continue;
+    }
+    const categoryMatch = trimmed.match(/^category:\s*([A-Za-z0-9_-]+)$/);
+    if (categoryMatch && indent === 2) {
+      reaction.category = categoryMatch[1];
       continue;
     }
     const temperatureMatch = trimmed.match(/^minTemp:\s*(-?\d+(?:\.\d+)?)$/);
@@ -70,7 +83,7 @@ export function parseYamlReactions(yaml) {
   }
 
   commitReaction();
-  return { materials: parsedMaterials, reactionTemps: parsedTemps };
+  return { materials: parsedMaterials, categories: parsedCategories, reactionTemps: parsedTemps };
 }
 
 export async function loadReactions() {
@@ -94,11 +107,20 @@ export async function loadReactions() {
   applyLanguage();
   state.craftingExceptions = new Set(await exceptionsResponse.json());
   state.materials = {};
+  state.materialCategories = {};
   state.reactionTemps = {};
 
   for (const response of reactionResponses) {
     const parsed = parseYamlReactions(await response.text());
-    Object.assign(state.materials, parsed.materials);
+    for (const [product, material] of Object.entries(parsed.materials)) {
+      const category = parsed.categories[product];
+      const currentCategory = state.materialCategories[product];
+      const isHigherPriority = category === 'CorvaxGoob' && currentCategory !== 'CorvaxGoob';
+      if (!currentCategory || isHigherPriority) {
+        state.materials[product] = material;
+        state.materialCategories[product] = category;
+      }
+    }
     Object.assign(state.reactionTemps, parsed.reactionTemps);
   }
 }
